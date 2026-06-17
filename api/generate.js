@@ -20,7 +20,8 @@ export default async function handler(req, res) {
   ],
   "steps": ["Step 1 text", "Step 2 text"],
   "tip": "One pro tip",
-  "variations": "Suggestions for variations"
+  "variations": "Suggestions for variations",
+  "imagePrompt": "A short, vivid visual description of the finished dish for an illustrator, focused on appearance, colours, plating/glassware, and lighting. No text in the image."
 }`;
 
   const content = imageBase64
@@ -55,6 +56,32 @@ export default async function handler(req, res) {
     const raw = data.content.map(item => item.text || "").join("");
     const clean = raw.replace(/```json|```/g, "").trim();
     const recipe = JSON.parse(clean);
+
+    // Generate an illustration of the dish using the image prompt.
+    // If this fails for any reason, we still return the recipe without an image
+    // rather than failing the whole request.
+    try {
+      const imgResponse = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "dall-e-3",
+          prompt: `Editorial food photography style illustration, warm natural light, shallow depth of field: ${recipe.imagePrompt || recipe.title}. No text or watermarks in the image.`,
+          n: 1,
+          size: "1024x1024"
+        })
+      });
+
+      if (imgResponse.ok) {
+        const imgData = await imgResponse.json();
+        recipe.imageUrl = imgData.data?.[0]?.url || null;
+      }
+    } catch (imgErr) {
+      console.error("Image generation failed:", imgErr);
+    }
 
     return res.status(200).json(recipe);
   } catch (err) {
