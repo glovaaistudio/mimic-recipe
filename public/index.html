@@ -1,15 +1,28 @@
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mimic Recipe — Turn any label into a recipe</title>
+<title>Mimic Recipe — Decode your favourites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <style>
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: #F7F9F6; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #FBF6EC;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(31,77,58,0.04) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
   @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -18,53 +31,206 @@
 const { useState, useRef } = React;
 const e = React.createElement;
 
-const ACCENT = "#4CAF82";
-const ACCENT2 = "#F9A825";
-const BG = "#F7F9F6";
+/* ---------- Design tokens (Scribe's palette) ---------- */
+const CREAM = "#FBF6EC";
+const GREEN = "#1F4D3A";
+const GREEN_DARK = "#163829";
+const ORANGE = "#E8602C";
+const ORANGE_DARK = "#C94E20";
+const GOLD = "#D9A441";
+const INK = "#1A1A16";
+const INK_MUTED = "#6B6358";
 const CARD = "#FFFFFF";
-const TEXT = "#1A2E1A";
-const MUTED = "#6B7C6B";
+const LINE = "#E8DFCB";
+
+const SERIF = "'Fraunces', Georgia, serif";
+const SANS = "'Inter', system-ui, sans-serif";
+const MONO = "'JetBrains Mono', monospace";
 
 const styles = {
-  app: { minHeight: "100vh", background: BG, color: TEXT },
-  header: { background: CARD, borderBottom: "1px solid #E0EBE0", padding: "18px 24px", display: "flex", alignItems: "center", gap: "12px" },
-  logo: { fontSize: "22px", fontWeight: "800", color: ACCENT, letterSpacing: "-0.5px" },
-  logoSub: { fontSize: "12px", color: MUTED, fontWeight: "500", letterSpacing: "0.5px", textTransform: "uppercase" },
-  hero: { textAlign: "center", padding: "48px 24px 32px", maxWidth: "600px", margin: "0 auto" },
-  heroTitle: { fontSize: "32px", fontWeight: "800", lineHeight: "1.2", marginBottom: "12px", color: TEXT },
-  heroSub: { fontSize: "16px", color: MUTED, lineHeight: "1.6", marginBottom: "32px" },
-  card: { background: CARD, borderRadius: "16px", padding: "28px", boxShadow: "0 2px 16px rgba(0,0,0,0.06)", maxWidth: "600px", margin: "0 auto 24px" },
-  tabRow: { display: "flex", gap: "8px", marginBottom: "24px", background: BG, padding: "4px", borderRadius: "10px" },
-  tab: (active) => ({ flex: 1, padding: "10px", border: "none", borderRadius: "8px", fontWeight: "600", fontSize: "14px", cursor: "pointer", background: active ? ACCENT : "transparent", color: active ? "#fff" : MUTED }),
-  textarea: { width: "100%", minHeight: "120px", border: "1.5px solid #D6E8D6", borderRadius: "10px", padding: "14px", fontSize: "15px", fontFamily: "inherit", color: TEXT, background: BG, resize: "vertical", outline: "none", boxSizing: "border-box", lineHeight: "1.6" },
-  uploadArea: (dragging) => ({ border: "2px dashed " + (dragging ? ACCENT : "#C0D8C0"), borderRadius: "12px", padding: "40px 24px", textAlign: "center", cursor: "pointer", background: dragging ? "#EEF7EE" : BG }),
-  uploadIcon: { fontSize: "40px", marginBottom: "12px" },
-  uploadText: { fontSize: "15px", color: MUTED, marginBottom: "8px" },
-  previewImg: { width: "100%", maxHeight: "220px", objectFit: "cover", borderRadius: "10px", marginBottom: "16px" },
-  label: { fontSize: "13px", fontWeight: "600", color: MUTED, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px", display: "block" },
-  btn: (disabled) => ({ width: "100%", padding: "14px", background: disabled ? "#C8DFC8" : ACCENT, color: "#fff", border: "none", borderRadius: "10px", fontSize: "16px", fontWeight: "700", cursor: disabled ? "not-allowed" : "pointer", marginTop: "20px" }),
-  servingsRow: { display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" },
-  servingsBtn: { width: "36px", height: "36px", borderRadius: "50%", border: "2px solid " + ACCENT, background: "white", color: ACCENT, fontSize: "20px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 },
-  servingsNum: { fontSize: "18px", fontWeight: "700", color: TEXT, minWidth: "28px", textAlign: "center" },
-  resultCard: { background: CARD, borderRadius: "16px", padding: "28px", boxShadow: "0 2px 16px rgba(0,0,0,0.06)", maxWidth: "600px", margin: "0 auto 32px" },
-  recipeTitle: { fontSize: "24px", fontWeight: "800", color: TEXT, marginBottom: "6px" },
-  recipeTagline: { fontSize: "14px", color: MUTED, marginBottom: "24px" },
-  sectionHead: { fontSize: "13px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.8px", color: ACCENT, marginBottom: "12px", marginTop: "24px", paddingBottom: "6px", borderBottom: "2px solid #E8F5E8" },
-  ingredientItem: { display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #F0F0F0", fontSize: "15px" },
-  stepItem: { display: "flex", gap: "14px", marginBottom: "16px", alignItems: "flex-start" },
-  stepNum: { minWidth: "28px", height: "28px", borderRadius: "50%", background: ACCENT, color: "white", fontWeight: "700", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "1px" },
-  stepText: { fontSize: "15px", lineHeight: "1.7", color: TEXT },
-  tipBox: { background: "#FFF8E8", border: "1px solid " + ACCENT2 + "30", borderRadius: "10px", padding: "14px 16px", fontSize: "14px", color: "#7A5C00", lineHeight: "1.6", marginTop: "20px" },
-  badge: { display: "inline-block", background: "#EEF7EE", color: ACCENT, borderRadius: "20px", padding: "4px 12px", fontSize: "12px", fontWeight: "600", marginRight: "6px", marginBottom: "6px" },
-  errorBox: { background: "#FFF0F0", border: "1px solid #FFCCCC", borderRadius: "10px", padding: "14px", color: "#CC0000", fontSize: "14px", marginTop: "16px" },
-  spinner: { display: "flex", flexDirection: "column", alignItems: "center", padding: "40px", gap: "16px", color: MUTED, fontSize: "15px" },
-  poweredBy: { textAlign: "center", padding: "12px", fontSize: "12px", color: "#AABCAA", marginTop: "8px" }
+  page: { minHeight: "100vh", color: INK, fontFamily: SANS },
+
+  header: {
+    background: GREEN,
+    padding: "14px 20px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "12px"
+  },
+  logoImg: { height: "30px", display: "block" },
+  unlockBtn: {
+    background: ORANGE,
+    color: "#fff",
+    border: "none",
+    borderRadius: "999px",
+    padding: "9px 16px",
+    fontSize: "13px",
+    fontWeight: "700",
+    fontFamily: SANS,
+    cursor: "pointer",
+    whiteSpace: "nowrap"
+  },
+
+  heroWrap: { position: "relative", padding: "36px 20px 28px", maxWidth: "640px", margin: "0 auto" },
+  label: {
+    position: "relative",
+    background: "#F3ECDA",
+    border: "1px solid " + LINE,
+    borderRadius: "2px",
+    padding: "28px 24px 24px",
+    transform: "rotate(-1.2deg)",
+    boxShadow: "0 1px 0 rgba(0,0,0,0.03)"
+  },
+  labelEdge: {
+    position: "absolute",
+    left: "10px",
+    right: "10px",
+    bottom: "-1px",
+    height: "0",
+    borderBottom: "2px dashed #C9BFA6"
+  },
+  heroTitle: {
+    fontFamily: SERIF,
+    fontWeight: "700",
+    fontSize: "34px",
+    lineHeight: "1.12",
+    color: INK,
+    margin: 0,
+    letterSpacing: "-0.5px"
+  },
+  heroTitleAccent: { color: ORANGE, fontStyle: "italic" },
+  heroSub: {
+    fontFamily: SANS,
+    fontSize: "14.5px",
+    color: INK_MUTED,
+    lineHeight: "1.55",
+    marginTop: "12px",
+    maxWidth: "420px"
+  },
+  heroImgWrap: { marginTop: "6px", textAlign: "center" },
+  heroImg: { width: "100%", maxWidth: "420px", display: "block", margin: "0 auto" },
+
+  card: {
+    background: CARD,
+    borderRadius: "14px",
+    padding: "22px",
+    border: "1px solid " + LINE,
+    boxShadow: "0 4px 24px rgba(31,77,58,0.06)",
+    maxWidth: "600px",
+    margin: "0 auto 24px"
+  },
+  tabRow: { display: "flex", gap: "8px", marginBottom: "20px" },
+  tab: (active) => ({
+    flex: 1, padding: "11px", border: "1.5px solid " + (active ? GREEN : LINE),
+    borderRadius: "9px", fontWeight: "600", fontSize: "13.5px", cursor: "pointer",
+    background: active ? GREEN : "transparent", color: active ? "#fff" : INK_MUTED,
+    fontFamily: SANS, transition: "all 0.15s"
+  }),
+  eyebrow: {
+    fontFamily: MONO, fontSize: "11px", fontWeight: "600", color: GREEN,
+    textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px", display: "block"
+  },
+  textarea: {
+    width: "100%", minHeight: "110px", border: "1.5px solid " + LINE, borderRadius: "9px",
+    padding: "13px", fontSize: "14.5px", fontFamily: SANS, color: INK, background: CREAM,
+    resize: "vertical", outline: "none", boxSizing: "border-box", lineHeight: "1.6"
+  },
+  uploadArea: (dragging) => ({
+    border: "2px dashed " + (dragging ? ORANGE : "#D9CCAE"), borderRadius: "11px",
+    padding: "36px 20px", textAlign: "center", cursor: "pointer",
+    background: dragging ? "#FBEFE6" : CREAM
+  }),
+  uploadIcon: { fontSize: "34px", marginBottom: "10px" },
+  uploadText: { fontSize: "14px", color: INK_MUTED, marginBottom: "6px", fontFamily: SANS },
+  previewImg: { width: "100%", maxHeight: "200px", objectFit: "cover", borderRadius: "9px", marginBottom: "14px" },
+  btnSecondary: {
+    width: "100%", padding: "11px", background: "transparent", color: INK_MUTED,
+    border: "1.5px solid " + LINE, borderRadius: "9px", fontSize: "14px", fontWeight: "600",
+    cursor: "pointer", fontFamily: SANS, marginTop: "0"
+  },
+  generateBtn: (disabled) => ({
+    width: "100%", padding: "14px", background: disabled ? "#E3D9C4" : ORANGE, color: "#fff",
+    border: "none", borderRadius: "10px", fontSize: "15.5px", fontWeight: "700",
+    cursor: disabled ? "not-allowed" : "pointer", marginTop: "18px", fontFamily: SANS,
+    letterSpacing: "0.2px"
+  }),
+  errorBox: {
+    background: "#FBEAE3", border: "1px solid #EFC4AE", borderRadius: "9px",
+    padding: "13px", color: "#A4391A", fontSize: "13.5px", marginTop: "14px", fontFamily: SANS
+  },
+
+  spinnerWrap: { display: "flex", flexDirection: "column", alignItems: "center", padding: "44px 20px", gap: "14px", color: INK_MUTED, fontFamily: SANS, fontSize: "14px" },
+
+  resultCard: {
+    background: CARD, borderRadius: "16px", overflow: "hidden", border: "1px solid " + LINE,
+    boxShadow: "0 4px 24px rgba(31,77,58,0.07)", maxWidth: "600px", margin: "0 auto 24px"
+  },
+  resultImgWrap: { width: "100%", aspectRatio: "4/3", background: "#EFE7D4", position: "relative", overflow: "hidden" },
+  resultImg: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
+  resultImgFallback: { width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "44px" },
+  resultBody: { padding: "24px" },
+  recipeTitle: { fontFamily: SERIF, fontSize: "23px", fontWeight: "700", color: INK, marginBottom: "5px", lineHeight: "1.2" },
+  recipeTagline: { fontFamily: SANS, fontSize: "13.5px", color: INK_MUTED, marginBottom: "16px", lineHeight: "1.5" },
+  badge: {
+    display: "inline-block", background: "#EFF3ED", color: GREEN, borderRadius: "999px",
+    padding: "4px 11px", fontSize: "11.5px", fontWeight: "600", marginRight: "6px", marginBottom: "6px",
+    fontFamily: SANS
+  },
+  sectionHead: {
+    fontFamily: MONO, fontSize: "11px", fontWeight: "700", textTransform: "uppercase",
+    letterSpacing: "1px", color: GREEN, marginBottom: "10px", marginTop: "22px",
+    paddingBottom: "8px", borderBottom: "1px solid " + LINE
+  },
+  servingsRow: { display: "flex", alignItems: "center", gap: "12px", marginBottom: "6px" },
+  servingsBtn: {
+    width: "32px", height: "32px", borderRadius: "50%", border: "1.5px solid " + GREEN,
+    background: "white", color: GREEN, fontSize: "17px", fontWeight: "700", cursor: "pointer",
+    display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1, fontFamily: SANS
+  },
+  servingsNum: { fontFamily: SERIF, fontSize: "17px", fontWeight: "700", color: INK, minWidth: "24px", textAlign: "center" },
+  ingredientRow: {
+    display: "flex", justifyContent: "space-between", alignItems: "baseline",
+    padding: "9px 0", borderBottom: "1px dashed " + LINE, fontSize: "14px", fontFamily: SANS
+  },
+  ingredientAmount: { color: ORANGE_DARK, fontWeight: "700", fontFamily: MONO, fontSize: "13px", whiteSpace: "nowrap", marginLeft: "12px" },
+  stepRow: { display: "flex", gap: "13px", marginBottom: "15px", alignItems: "flex-start" },
+  stepNum: {
+    minWidth: "26px", height: "26px", borderRadius: "50%", background: GREEN, color: "white",
+    fontWeight: "700", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center",
+    marginTop: "1px", fontFamily: SANS, flexShrink: 0
+  },
+  stepText: { fontSize: "14.5px", lineHeight: "1.65", color: INK, fontFamily: SANS },
+  tipBox: {
+    background: "#FBF1E0", border: "1px solid " + GOLD + "55", borderRadius: "10px",
+    padding: "13px 15px", fontSize: "13.5px", color: "#6E4F12", lineHeight: "1.6",
+    marginTop: "18px", fontFamily: SANS
+  },
+  variationsText: { fontSize: "14px", color: INK, lineHeight: "1.65", fontFamily: SANS },
+
+  premiumCard: {
+    background: GREEN_DARK, borderRadius: "16px", padding: "22px", maxWidth: "600px",
+    margin: "0 auto 28px", border: "1px solid " + GREEN
+  },
+  premiumEyebrow: {
+    fontFamily: MONO, fontSize: "11px", fontWeight: "700", color: GOLD,
+    textTransform: "uppercase", letterSpacing: "1px", marginBottom: "10px", display: "block"
+  },
+  premiumTitle: { fontFamily: SERIF, fontSize: "18px", fontWeight: "700", color: "#fff", marginBottom: "8px" },
+  premiumText: { fontFamily: SANS, fontSize: "13.5px", color: "#D8E3DC", lineHeight: "1.6", marginBottom: "16px" },
+  premiumBtn: {
+    background: ORANGE, color: "#fff", border: "none", borderRadius: "9px",
+    padding: "12px 18px", fontSize: "14px", fontWeight: "700", cursor: "pointer",
+    fontFamily: SANS, display: "inline-flex", alignItems: "center", gap: "8px"
+  },
+
+  footer: { textAlign: "center", padding: "18px 20px 36px", fontSize: "12px", color: "#A89D88", fontFamily: SANS }
 };
 
 function Spinner() {
-  return e("div", { style: styles.spinner },
-    e("div", { style: { width: "40px", height: "40px", border: "3px solid #E0EBE0", borderTop: "3px solid " + ACCENT, borderRadius: "50%", animation: "spin 0.8s linear infinite" } }),
-    e("span", null, "Crafting your recipe...")
+  return e("div", { style: styles.spinnerWrap },
+    e("div", { style: { width: "38px", height: "38px", border: "3px solid " + LINE, borderTop: "3px solid " + ORANGE, borderRadius: "50%", animation: "spin 0.8s linear infinite" } }),
+    e("span", null, "Decoding your recipe\u2026")
   );
 }
 
@@ -78,37 +244,73 @@ function RecipeResult({ data, servings, setServings }) {
   };
 
   return e("div", { style: styles.resultCard },
-    e("div", { style: styles.recipeTitle }, data.title),
-    e("div", { style: styles.recipeTagline }, data.tagline),
-    e("div", { style: { display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "8px" } },
-      (data.tags || []).map((t, i) => e("span", { key: i, style: styles.badge }, t))
+    e("div", { style: styles.resultImgWrap },
+      data.imageUrl
+        ? e("img", { src: data.imageUrl, alt: data.title, style: styles.resultImg })
+        : e("div", { style: styles.resultImgFallback }, "\uD83C\uDF7D\uFE0F")
     ),
-    e("div", { style: styles.sectionHead }, "Servings"),
-    e("div", { style: styles.servingsRow },
-      e("button", { style: styles.servingsBtn, onClick: () => setServings(Math.max(1, servings - 1)) }, "\u2212"),
-      e("span", { style: styles.servingsNum }, servings),
-      e("button", { style: styles.servingsBtn, onClick: () => setServings(servings + 1) }, "+"),
-      e("span", { style: { fontSize: "14px", color: MUTED } }, "people")
+    e("div", { style: styles.resultBody },
+      e("div", { style: styles.recipeTitle }, data.title),
+      e("div", { style: styles.recipeTagline }, data.tagline),
+      e("div", { style: { marginBottom: "4px" } },
+        (data.tags || []).map((t, i) => e("span", { key: i, style: styles.badge }, t))
+      ),
+      e("div", { style: styles.sectionHead }, "Servings"),
+      e("div", { style: styles.servingsRow },
+        e("button", { style: styles.servingsBtn, onClick: () => setServings(Math.max(1, servings - 1)) }, "\u2212"),
+        e("span", { style: styles.servingsNum }, servings),
+        e("button", { style: styles.servingsBtn, onClick: () => setServings(servings + 1) }, "+"),
+        e("span", { style: { fontSize: "13.5px", color: INK_MUTED, fontFamily: SANS } }, "people")
+      ),
+      e("div", { style: styles.sectionHead }, "Ingredients"),
+      (data.ingredients || []).map((ing, i) =>
+        e("div", { key: i, style: styles.ingredientRow },
+          e("span", null, ing.name),
+          e("span", { style: styles.ingredientAmount }, scaleAmount(ing.amount) + " " + ing.unit)
+        )
+      ),
+      e("div", { style: styles.sectionHead }, "Method"),
+      (data.steps || []).map((step, i) =>
+        e("div", { key: i, style: styles.stepRow },
+          e("div", { style: styles.stepNum }, i + 1),
+          e("div", { style: styles.stepText }, step)
+        )
+      ),
+      data.tip ? e("div", { style: styles.tipBox }, "\uD83D\uDCA1 ", e("strong", null, "Pro tip: "), data.tip) : null,
+      data.variations ? e(React.Fragment, null,
+        e("div", { style: styles.sectionHead }, "Variations to try"),
+        e("div", { style: styles.variationsText }, data.variations)
+      ) : null
+    )
+  );
+}
+
+function PremiumTeaser() {
+  return e("div", { style: styles.premiumCard },
+    e("span", { style: styles.premiumEyebrow }, "My Pantry \u00B7 Premium"),
+    e("div", { style: styles.premiumTitle }, "Know what's missing before you shop"),
+    e("p", { style: styles.premiumText }, "Tell us what's already in your kitchen and Mimic Recipe checks it against every recipe automatically \u2014 flagging what to buy and suggesting smart substitutes for anything you don't have."),
+    e("button", { style: styles.premiumBtn }, "\uD83D\uDD12 Unlock Premium")
+  );
+}
+
+function Header() {
+  return e("div", { style: styles.header },
+    e("img", { src: "/assets/logo.png", alt: "Mimic Recipe", style: styles.logoImg }),
+    e("button", { style: styles.unlockBtn }, "Unlock Premium")
+  );
+}
+
+function Hero() {
+  return e("div", { style: styles.heroWrap },
+    e("div", { style: styles.label },
+      e("div", { style: styles.labelEdge }),
+      e("h1", { style: styles.heroTitle }, "Mimic Recipe:", e("br"), "Decode Your ", e("span", { style: styles.heroTitleAccent }, "Favourites.")),
+      e("p", { style: styles.heroSub }, "Type the ingredients from any food or drink you love, or photograph the label \u2014 and get a home recipe, reverse-engineered, in seconds.")
     ),
-    e("div", { style: styles.sectionHead }, "Ingredients"),
-    (data.ingredients || []).map((ing, i) =>
-      e("div", { key: i, style: styles.ingredientItem },
-        e("span", null, ing.name),
-        e("span", { style: { color: ACCENT, fontWeight: "600" } }, scaleAmount(ing.amount) + " " + ing.unit)
-      )
-    ),
-    e("div", { style: styles.sectionHead }, "Method"),
-    (data.steps || []).map((step, i) =>
-      e("div", { key: i, style: styles.stepItem },
-        e("div", { style: styles.stepNum }, i + 1),
-        e("div", { style: styles.stepText }, step)
-      )
-    ),
-    data.tip ? e("div", { style: styles.tipBox }, "\uD83D\uDCA1 ", e("strong", null, "Pro tip: "), data.tip) : null,
-    data.variations ? e(React.Fragment, null,
-      e("div", { style: styles.sectionHead }, "Variations to try"),
-      e("div", { style: { fontSize: "15px", color: TEXT, lineHeight: "1.7" } }, data.variations)
-    ) : null
+    e("div", { style: styles.heroImgWrap },
+      e("img", { src: "/assets/hero.png", alt: "", style: styles.heroImg })
+    )
   );
 }
 
@@ -157,45 +359,37 @@ function App() {
       const data = await response.json();
       setRecipe(data);
     } catch (err) {
-      setError("Something went wrong generating your recipe. Please check your ingredients and try again.");
+      setError("Something went wrong decoding that recipe. Check your ingredients and try again.");
     }
     setLoading(false);
   };
 
   const canGenerate = tab === "text" ? ingredientText.trim().length > 10 : !!imageBase64;
 
-  return e("div", { style: styles.app },
-    e("div", { style: styles.header },
-      e("div", null,
-        e("div", { style: styles.logo }, "\uD83C\uDF43 Mimic Recipe"),
-        e("div", { style: styles.logoSub }, "Turn any label into a recipe")
-      )
-    ),
-    e("div", { style: styles.hero },
-      e("div", { style: styles.heroTitle }, "Love a product?", e("br"), "Make it yourself."),
-      e("div", { style: styles.heroSub }, "Enter the ingredients from any food or drink you love, or snap a photo of the label — and get a home recipe instantly.")
-    ),
-    e("div", { style: { padding: "0 16px" } },
+  return e("div", { style: styles.page },
+    e(Header),
+    e(Hero),
+    e("div", { style: { padding: "0 20px" } },
       e("div", { style: styles.card },
         e("div", { style: styles.tabRow },
           e("button", { style: styles.tab(tab === "text"), onClick: () => { setTab("text"); setRecipe(null); setError(null); } }, "\u270F\uFE0F Type ingredients"),
           e("button", { style: styles.tab(tab === "photo"), onClick: () => { setTab("photo"); setRecipe(null); setError(null); } }, "\uD83D\uDCF7 Upload a photo")
         ),
         tab === "text" ? e(React.Fragment, null,
-          e("label", { style: styles.label }, "Paste the ingredients list"),
+          e("span", { style: styles.eyebrow }, "Ingredients list"),
           e("textarea", {
             style: styles.textarea,
-            placeholder: "e.g. Water, Mango (32%), Pineapple juice, Banana purée, Passion fruit (4%), Lemon juice, Natural flavourings...",
+            placeholder: "e.g. Water, Mango (32%), Pineapple juice, Banana pur\u00e9e, Passion fruit (4%), Lemon juice, Natural flavourings\u2026",
             value: ingredientText,
             onChange: ev => setIngredientText(ev.target.value)
           })
         ) : null,
         tab === "photo" ? e(React.Fragment, null,
-          e("label", { style: styles.label }, "Photo of your product label"),
+          e("span", { style: styles.eyebrow }, "Product label photo"),
           imagePreview ? e(React.Fragment, null,
             e("img", { src: imagePreview, alt: "Label preview", style: styles.previewImg }),
             e("button", {
-              style: Object.assign({}, styles.btn(false), { background: "#f0f0f0", color: MUTED, marginTop: "0" }),
+              style: styles.btnSecondary,
               onClick: () => { setImageFile(null); setImagePreview(null); setImageBase64(null); }
             }, "Remove photo")
           ) : e("div", {
@@ -207,16 +401,19 @@ function App() {
           },
             e("div", { style: styles.uploadIcon }, "\uD83D\uDCF8"),
             e("div", { style: styles.uploadText }, "Tap to upload or drag a photo here"),
-            e("div", { style: { fontSize: "13px", color: "#AABCAA" } }, "JPG, PNG, WEBP supported"),
+            e("div", { style: { fontSize: "12px", color: "#B7AC95", fontFamily: SANS } }, "JPG, PNG, WEBP supported"),
             e("input", { ref: fileRef, type: "file", accept: "image/*", style: { display: "none" }, onChange: ev => handleImage(ev.target.files[0]) })
           )
         ) : null,
-        e("button", { style: styles.btn(!canGenerate), disabled: !canGenerate, onClick: generate }, "Generate My Recipe \u2192"),
+        e("button", { style: styles.generateBtn(!canGenerate), disabled: !canGenerate, onClick: generate }, "Generate My Recipe \u2192"),
         error ? e("div", { style: styles.errorBox }, "\u26A0\uFE0F " + error) : null
       ),
-      loading ? e("div", { style: styles.resultCard }, e(Spinner)) : null,
-      (recipe && !loading) ? e(RecipeResult, { data: recipe, servings: servings, setServings: setServings }) : null,
-      e("div", { style: styles.poweredBy }, "Powered by Claude AI \u00B7 A Glova Studio concept")
+      loading ? e("div", { style: { maxWidth: "600px", margin: "0 auto 24px", background: CARD, borderRadius: "16px", border: "1px solid " + LINE } }, e(Spinner)) : null,
+      (recipe && !loading) ? e(React.Fragment, null,
+        e(RecipeResult, { data: recipe, servings: servings, setServings: setServings }),
+        e(PremiumTeaser)
+      ) : null,
+      e("div", { style: styles.footer }, "Powered by Claude AI \u00B7 A Glova Studio concept")
     )
   );
 }
