@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+      export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -63,9 +63,42 @@ export default async function handler(req, res) {
       console.error("Failed to parse recipe JSON. Raw text was:", raw);
       return res.status(500).json({ error: "Failed to generate recipe", debugRaw: raw.slice(0, 500) });
     }
-    data.imageUrl
-        ? e("img", { src: data.imageUrl, alt: data.title, style: styles.resultImg })
-        : e("div", { style: { width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "16px", textAlign: "center" } },
-            e("div", { style: { fontSize: "44px", marginBottom: "10px" } }, "\uD83C\uDF7D\uFE0F"),
-            data.imageDebug ? e("div", { style: { fontSize: "11px", color: "#A4391A", fontFamily: "monospace", wordBreak: "break-word" } }, data.imageDebug) : null
-          )
+
+    // Generate an illustration of the dish using the image prompt.
+    // If this fails for any reason, we still return the recipe without an image
+    // rather than failing the whole request, but we DO capture the error so we
+    // can see what went wrong.
+    try {
+      const imgResponse = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "dall-e-3",
+          prompt: `Editorial food photography style illustration, warm natural light, shallow depth of field: ${recipe.imagePrompt || recipe.title}. No text or watermarks in the image.`,
+          n: 1,
+          size: "1024x1024"
+        })
+      });
+
+      if (imgResponse.ok) {
+        const imgData = await imgResponse.json();
+        recipe.imageUrl = imgData.data?.[0]?.url || null;
+      } else {
+        const errBody = await imgResponse.text();
+        console.error("Image generation failed. Status:", imgResponse.status, "Body:", errBody);
+        recipe.imageDebug = `Status ${imgResponse.status}: ${errBody}`;
+      }
+    } catch (imgErr) {
+      console.error("Image generation request threw:", imgErr);
+      recipe.imageDebug = "Request threw: " + (imgErr.message || String(imgErr));
+    }
+
+    return res.status(200).json(recipe);
+  } catch (err) {
+    console.error("Server error:", err);
+    return res.status(500).json({ error: "Something went wrong generating your recipe" });
+  }
+                        }
