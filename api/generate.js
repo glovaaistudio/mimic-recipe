@@ -76,7 +76,7 @@
           "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          model: "dall-e-3",
+          model: "gpt-image-1",
           prompt: `Editorial food photography style illustration, warm natural light, shallow depth of field: ${recipe.imagePrompt || recipe.title}. No text or watermarks in the image.`,
           n: 1,
           size: "1024x1024"
