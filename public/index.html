@@ -345,12 +345,15 @@ function App() {
         body: JSON.stringify(body)
       });
 
-      if (!response.ok) throw new Error("Request failed");
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.debugRaw ? "DEBUG: " + errData.debugRaw : (errData.error || "Request failed"));
+      }
 
       const data = await response.json();
       setRecipe(data);
     } catch (err) {
-      setError("Something went wrong decoding that recipe. Check your ingredients and try again.");
+      setError(err.message || "Something went wrong decoding that recipe. Check your ingredients and try again.");
     }
     setLoading(false);
   };
