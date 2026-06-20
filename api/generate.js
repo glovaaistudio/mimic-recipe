@@ -55,8 +55,14 @@ export default async function handler(req, res) {
 
     const raw = data.content.map(item => item.text || "").join("");
     const clean = raw.replace(/```json|```/g, "").trim();
-    const recipe = JSON.parse(clean);
 
+    let recipe;
+    try {
+      recipe = JSON.parse(clean);
+    } catch (parseErr) {
+      console.error("Failed to parse recipe JSON. Raw text was:", raw);
+      return res.status(500).json({ error: "Failed to generate recipe", debugRaw: raw.slice(0, 500) });
+    }
     data.imageUrl
         ? e("img", { src: data.imageUrl, alt: data.title, style: styles.resultImg })
         : e("div", { style: { width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "16px", textAlign: "center" } },
