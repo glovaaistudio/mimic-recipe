@@ -459,11 +459,12 @@ function App() {
 
       !isSignedIn && clerkReady ? e("div", { style: styles.signInPrompt },
         e("div", { style: styles.signInTitle }, "Sign in to get started"),
-        e("p", { style: styles.signInText }, "Create a free account to decode your first recipe \u2014 3 free decodes every month, no card required."),
+        e("p", { style: styles.signInText }, "Create a free account to get 3 recipe decodes every month, no card required \u2014 or go Premium for unlimited decodes plus My Pantry."),
         e("button", { style: styles.signInBtn, onClick: handleSignIn }, "Sign in or create account")
       ) : null,
 
       isSignedIn ? e("div", { style: styles.card },
+        e("div", { style: styles.usageNote }, "Free plan: 3 decodes a month \u00B7 ", e("a", { href: "#", style: { color: ORANGE_DARK, fontWeight: "700", textDecoration: "none" } }, "Go Premium for unlimited")),
         e("div", { style: styles.tabRow },
           e("button", { style: styles.tab(tab === "text"), onClick: () => { setTab("text"); setRecipe(null); setError(null); setLimitReached(false); } }, "\u270F\uFE0F Type ingredients"),
           e("button", { style: styles.tab(tab === "photo"), onClick: () => { setTab("photo"); setRecipe(null); setError(null); setLimitReached(false); } }, "\uD83D\uDCF7 Upload a photo")
