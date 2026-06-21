@@ -9,6 +9,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+
+<!-- Clerk authentication SDK (script-tag method, no build step needed) -->
+<script
+  async
+  crossorigin="anonymous"
+  data-clerk-publishable-key="pk_test_Z2FtZS10aWdlci0xMy5jbGVyay5hY2NvdW50cy5kZXYk"
+  src="https://game-tiger-13.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+  type="text/javascript"
+></script>
+
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -27,11 +37,11 @@
 </head>
 <body>
 <div id="root"></div>
-<script>
-const { useState, useRef } = React;
+<script type="text/javascript">
+const { useState, useRef, useEffect } = React;
 const e = React.createElement;
 
-/* ---------- Design tokens (Scribe's palette) ---------- */
+/* ---------- Design tokens ---------- */
 const CREAM = "#FBF6EC";
 const GREEN = "#1F4D3A";
 const GREEN_DARK = "#163829";
@@ -59,7 +69,7 @@ const styles = {
     gap: "12px"
   },
   logoImg: { height: "40px", display: "block", gridColumn: "2", justifySelf: "center" },
-  unlockBtn: {
+  headerBtn: {
     background: ORANGE,
     color: "#fff",
     border: "none",
@@ -69,17 +79,28 @@ const styles = {
     fontWeight: "700",
     fontFamily: SANS,
     cursor: "pointer",
-    whiteSpace: "nowrap"
+    whiteSpace: "nowrap",
+    justifySelf: "end"
   },
-heroImgBand: {
+  headerBtnGhost: {
+    background: "transparent",
+    color: "#fff",
+    border: "1.5px solid rgba(255,255,255,0.5)",
+    borderRadius: "999px",
+    padding: "8px 14px",
+    fontSize: "13px",
+    fontWeight: "600",
+    fontFamily: SANS,
+    cursor: "pointer",
+    whiteSpace: "nowrap",
+    justifySelf: "end"
+  },
+
+  heroImgBand: {
     width: "100%", aspectRatio: "688 / 640", overflow: "hidden", background: "#F3ECDA"
   },
   heroImg: { width: "100%", height: "100%", display: "block", objectFit: "cover", objectPosition: "center" },
   heroWrap: { padding: "32px 24px 28px", maxWidth: "640px", margin: "0 auto" },
-  heroEyebrow: {
-    fontFamily: MONO, fontSize: "11px", fontWeight: "700", color: ORANGE,
-    textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: "10px", display: "block"
-  },
   heroTitle: {
     fontFamily: SERIF,
     fontWeight: "700",
@@ -98,7 +119,7 @@ heroImgBand: {
     marginTop: "12px",
     maxWidth: "440px"
   },
- 
+
   card: {
     background: CARD,
     borderRadius: "14px",
@@ -132,6 +153,7 @@ heroImgBand: {
   uploadIcon: { fontSize: "34px", marginBottom: "10px" },
   uploadText: { fontSize: "14px", color: INK_MUTED, marginBottom: "6px", fontFamily: SANS },
   previewImg: { width: "100%", maxHeight: "200px", objectFit: "cover", borderRadius: "9px", marginBottom: "14px" },
+  label: { fontSize: "13px", fontWeight: "600", color: INK_MUTED, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px", display: "block" },
   btnSecondary: {
     width: "100%", padding: "11px", background: "transparent", color: INK_MUTED,
     border: "1.5px solid " + LINE, borderRadius: "9px", fontSize: "14px", fontWeight: "600",
@@ -147,6 +169,32 @@ heroImgBand: {
     background: "#FBEAE3", border: "1px solid #EFC4AE", borderRadius: "9px",
     padding: "13px", color: "#A4391A", fontSize: "13.5px", marginTop: "14px", fontFamily: SANS
   },
+  limitBox: {
+    background: "#FBF1E0", border: "1px solid " + GOLD, borderRadius: "9px",
+    padding: "16px", color: "#6E4F12", fontSize: "14px", marginTop: "14px", fontFamily: SANS,
+    lineHeight: "1.6"
+  },
+  limitBtn: {
+    background: ORANGE, color: "#fff", border: "none", borderRadius: "8px",
+    padding: "10px 16px", fontSize: "13.5px", fontWeight: "700", cursor: "pointer",
+    fontFamily: SANS, marginTop: "10px"
+  },
+
+  usageNote: {
+    fontSize: "13px", color: INK_MUTED, fontFamily: SANS, textAlign: "center",
+    marginBottom: "16px"
+  },
+
+  signInPrompt: {
+    background: CARD, borderRadius: "14px", padding: "32px 24px", textAlign: "center",
+    border: "1px solid " + LINE, maxWidth: "600px", margin: "0 auto 24px"
+  },
+  signInTitle: { fontFamily: SERIF, fontSize: "20px", fontWeight: "700", color: INK, marginBottom: "8px" },
+  signInText: { fontSize: "14px", color: INK_MUTED, marginBottom: "18px", fontFamily: SANS, lineHeight: "1.6" },
+  signInBtn: {
+    background: GREEN, color: "#fff", border: "none", borderRadius: "9px",
+    padding: "12px 24px", fontSize: "14.5px", fontWeight: "700", cursor: "pointer", fontFamily: SANS
+  },
 
   spinnerWrap: { display: "flex", flexDirection: "column", alignItems: "center", padding: "44px 20px", gap: "14px", color: INK_MUTED, fontFamily: SANS, fontSize: "14px" },
 
@@ -156,7 +204,6 @@ heroImgBand: {
   },
   resultImgWrap: { width: "100%", aspectRatio: "4/3", background: "#EFE7D4", position: "relative", overflow: "hidden" },
   resultImg: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
-  resultImgFallback: { width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "44px" },
   resultBody: { padding: "24px" },
   recipeTitle: { fontFamily: SERIF, fontSize: "23px", fontWeight: "700", color: INK, marginBottom: "5px", lineHeight: "1.2" },
   recipeTagline: { fontFamily: SANS, fontSize: "13.5px", color: INK_MUTED, marginBottom: "16px", lineHeight: "1.5" },
@@ -215,10 +262,10 @@ heroImgBand: {
   footer: { textAlign: "center", padding: "18px 20px 36px", fontSize: "12px", color: "#A89D88", fontFamily: SANS }
 };
 
-function Spinner() {
+function Spinner({ text }) {
   return e("div", { style: styles.spinnerWrap },
     e("div", { style: { width: "38px", height: "38px", border: "3px solid " + LINE, borderTop: "3px solid " + ORANGE, borderRadius: "50%", animation: "spin 0.8s linear infinite" } }),
-    e("span", null, "Decoding your recipe\u2026")
+    e("span", null, text || "Decoding your recipe\u2026")
   );
 }
 
@@ -235,10 +282,7 @@ function RecipeResult({ data, servings, setServings }) {
     e("div", { style: styles.resultImgWrap },
       data.imageUrl
         ? e("img", { src: data.imageUrl, alt: data.title, style: styles.resultImg })
-        : e("div", { style: { width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "16px", textAlign: "center" } },
-            e("div", { style: { fontSize: "44px", marginBottom: "10px" } }, "\uD83C\uDF7D\uFE0F"),
-            data.imageDebug ? e("div", { style: { fontSize: "11px", color: "#A4391A", fontFamily: "monospace", wordBreak: "break-word" } }, data.imageDebug) : null
-          )
+        : e("div", { style: { width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "44px" } }, "\uD83C\uDF7D\uFE0F")
     ),
     e("div", { style: styles.resultBody },
       e("div", { style: styles.recipeTitle }, data.title),
@@ -285,11 +329,13 @@ function PremiumTeaser() {
   );
 }
 
-function Header() {
+function Header({ isSignedIn, userName, onSignIn, onSignOut }) {
   return e("div", { style: styles.header },
     e("div"),
     e("img", { src: "/assets/logo.png", alt: "Mimic Recipe", style: styles.logoImg }),
-    e("button", { style: Object.assign({}, styles.unlockBtn, { justifySelf: "end" }) }, "Unlock Premium")
+    isSignedIn
+      ? e("button", { style: styles.headerBtnGhost, onClick: onSignOut }, "Sign out" + (userName ? " (" + userName + ")" : ""))
+      : e("button", { style: styles.headerBtn, onClick: onSignIn }, "Sign in")
   );
 }
 
@@ -299,12 +345,12 @@ function Hero() {
       e("img", { src: "/assets/hero.png", alt: "", style: styles.heroImg })
     ),
     e("div", { style: styles.heroWrap },
-      
       e("h1", { style: styles.heroTitle }, "Mimic Recipe:", e("br"), "Decode Your ", e("span", { style: styles.heroTitleAccent }, "Favourites.")),
       e("p", { style: styles.heroSub }, "Type the ingredients from any food or drink you love, or photograph the label \u2014 and get a home recipe, reverse-engineered, in seconds.")
     )
   );
 }
+
 function App() {
   const [tab, setTab] = useState("text");
   const [ingredientText, setIngredientText] = useState("");
@@ -315,8 +361,41 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
+  const [limitReached, setLimitReached] = useState(false);
   const [servings, setServings] = useState(2);
   const fileRef = useRef();
+
+  const [clerkReady, setClerkReady] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [userName, setUserName] = useState(null);
+
+  // Initialise Clerk once the script has loaded
+  useEffect(() => {
+    function init() {
+      if (!window.Clerk) {
+        setTimeout(init, 100);
+        return;
+      }
+      window.Clerk.load().then(() => {
+        setClerkReady(true);
+        setIsSignedIn(!!window.Clerk.user);
+        setUserName(window.Clerk.user?.firstName || null);
+        window.Clerk.addListener(({ user }) => {
+          setIsSignedIn(!!user);
+          setUserName(user?.firstName || null);
+        });
+      });
+    }
+    init();
+  }, []);
+
+  const handleSignIn = () => {
+    if (window.Clerk) window.Clerk.openSignIn({});
+  };
+
+  const handleSignOut = () => {
+    if (window.Clerk) window.Clerk.signOut();
+  };
 
   const handleImage = (file) => {
     if (!file || !file.type.startsWith("image/")) return;
@@ -332,22 +411,35 @@ function App() {
   const generate = async () => {
     setLoading(true);
     setError(null);
+    setLimitReached(false);
     setRecipe(null);
     setServings(2);
     try {
+      const token = await window.Clerk.session.getToken();
+
       const body = tab === "text"
         ? { ingredientText }
         : { imageBase64, imageMediaType: imageFile.type };
 
       const response = await fetch("/api/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
         body: JSON.stringify(body)
       });
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.debugRaw ? "DEBUG: " + errData.debugRaw : (errData.error || "Request failed"));
+        if (errData.limitReached) {
+          setLimitReached(true);
+          setError(errData.error);
+        } else {
+          throw new Error(errData.debugRaw ? "DEBUG: " + errData.debugRaw : (errData.error || "Request failed"));
+        }
+        setLoading(false);
+        return;
       }
 
       const data = await response.json();
@@ -358,17 +450,25 @@ function App() {
     setLoading(false);
   };
 
-  const canGenerate = tab === "text" ? ingredientText.trim().length > 10 : !!imageBase64;
+  const canGenerate = (tab === "text" ? ingredientText.trim().length > 10 : !!imageBase64) && isSignedIn;
 
   return e("div", { style: styles.page },
-    e(Header),
+    e(Header, { isSignedIn, userName, onSignIn: handleSignIn, onSignOut: handleSignOut }),
     e(Hero),
-    e("div", { style: { padding: "0 20px" } },
-      e("div", { style: styles.card },
+    e("div", { style: { padding: "0 16px" } },
+
+      !isSignedIn && clerkReady ? e("div", { style: styles.signInPrompt },
+        e("div", { style: styles.signInTitle }, "Sign in to get started"),
+        e("p", { style: styles.signInText }, "Create a free account to decode your first recipe \u2014 3 free decodes every month, no card required."),
+        e("button", { style: styles.signInBtn, onClick: handleSignIn }, "Sign in or create account")
+      ) : null,
+
+      isSignedIn ? e("div", { style: styles.card },
         e("div", { style: styles.tabRow },
-          e("button", { style: styles.tab(tab === "text"), onClick: () => { setTab("text"); setRecipe(null); setError(null); } }, "\u270F\uFE0F Type ingredients"),
-          e("button", { style: styles.tab(tab === "photo"), onClick: () => { setTab("photo"); setRecipe(null); setError(null); } }, "\uD83D\uDCF7 Upload a photo")
+          e("button", { style: styles.tab(tab === "text"), onClick: () => { setTab("text"); setRecipe(null); setError(null); setLimitReached(false); } }, "\u270F\uFE0F Type ingredients"),
+          e("button", { style: styles.tab(tab === "photo"), onClick: () => { setTab("photo"); setRecipe(null); setError(null); setLimitReached(false); } }, "\uD83D\uDCF7 Upload a photo")
         ),
+
         tab === "text" ? e(React.Fragment, null,
           e("span", { style: styles.eyebrow }, "Ingredients list"),
           e("textarea", {
@@ -378,6 +478,7 @@ function App() {
             onChange: ev => setIngredientText(ev.target.value)
           })
         ) : null,
+
         tab === "photo" ? e(React.Fragment, null,
           e("span", { style: styles.eyebrow }, "Product label photo"),
           imagePreview ? e(React.Fragment, null,
@@ -395,13 +496,21 @@ function App() {
           },
             e("div", { style: styles.uploadIcon }, "\uD83D\uDCF8"),
             e("div", { style: styles.uploadText }, "Tap to upload or drag a photo here"),
-            e("div", { style: { fontSize: "12px", color: "#B7AC95", fontFamily: SANS } }, "JPG, PNG, WEBP supported"),
+            e("div", { style: { fontSize: "13px", color: "#AABCAA" } }, "JPG, PNG, WEBP supported"),
             e("input", { ref: fileRef, type: "file", accept: "image/*", style: { display: "none" }, onChange: ev => handleImage(ev.target.files[0]) })
           )
         ) : null,
+
         e("button", { style: styles.generateBtn(!canGenerate), disabled: !canGenerate, onClick: generate }, "Generate My Recipe \u2192"),
-        error ? e("div", { style: styles.errorBox }, "\u26A0\uFE0F " + error) : null
-      ),
+
+        limitReached ? e("div", { style: styles.limitBox },
+          "\uD83D\uDD12 " + error,
+          e("br"),
+          e("button", { style: styles.limitBtn }, "Upgrade to Premium")
+        ) : (error ? e("div", { style: styles.errorBox }, "\u26A0\uFE0F " + error) : null)
+
+      ) : null,
+
       loading ? e("div", { style: { maxWidth: "600px", margin: "0 auto 24px", background: CARD, borderRadius: "16px", border: "1px solid " + LINE } }, e(Spinner)) : null,
       (recipe && !loading) ? e(React.Fragment, null,
         e(RecipeResult, { data: recipe, servings: servings, setServings: setServings }),
