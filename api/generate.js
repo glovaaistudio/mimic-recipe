@@ -1,8 +1,57 @@
-      export default async function handler(req, res) {
+import { sql } from "@vercel/postgres";
+import { createClerkClient } from "@clerk/backend";
+
+const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+
+const FREE_LIMIT = 3;
+
+function currentMonthKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  // --- 1. Verify the user is signed in ---
+  let userId;
+  try {
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.replace("Bearer ", "");
+    if (!token) {
+      return res.status(401).json({ error: "Please sign in to generate a recipe." });
+    }
+    const verified = await clerkClient.verifyToken(token);
+    userId = verified.sub;
+  } catch (authErr) {
+    console.error("Auth verification failed:", authErr);
+    return res.status(401).json({ error: "Please sign in to generate a recipe." });
+  }
+
+  // --- 2. Check usage limit (free tier = 3 per month) ---
+  const month = currentMonthKey();
+  try {
+    const usageResult = await sql`
+      SELECT count FROM usage WHERE user_id = ${userId} AND month = ${month};
+    `;
+    const currentCount = usageResult.rows[0]?.count || 0;
+
+    // NOTE: premium-tier bypass will be added once Stripe is wired up.
+    // For now everyone is on the free tier limit.
+    if (currentCount >= FREE_LIMIT) {
+      return res.status(403).json({
+        error: `You've used your ${FREE_LIMIT} free recipes this month. Upgrade to Premium for unlimited access.`,
+        limitReached: true
+      });
+    }
+  } catch (dbErr) {
+    console.error("Usage check failed:", dbErr);
+    return res.status(500).json({ error: "Something went wrong checking your usage. Please try again." });
+  }
+
+  // --- 3. Generate the recipe (same as before) ---
   const { ingredientText, imageBase64, imageMediaType } = req.body;
 
   const promptText = `You are a creative chef and recipe developer. ${
@@ -31,6 +80,7 @@
       ]
     : promptText;
 
+  let recipe;
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -56,49 +106,56 @@
     const raw = data.content.map(item => item.text || "").join("");
     const clean = raw.replace(/```json|```/g, "").trim();
 
-    let recipe;
     try {
       recipe = JSON.parse(clean);
     } catch (parseErr) {
       console.error("Failed to parse recipe JSON. Raw text was:", raw);
       return res.status(500).json({ error: "Failed to generate recipe", debugRaw: raw.slice(0, 500) });
     }
-
-    // Generate an illustration of the dish using the image prompt.
-    // If this fails for any reason, we still return the recipe without an image
-    // rather than failing the whole request, but we DO capture the error so we
-    // can see what went wrong.
-    try {
-      const imgResponse = await fetch("https://api.openai.com/v1/images/generations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "gpt-image-1",
-          prompt: `Editorial food photography style illustration, warm natural light, shallow depth of field: ${recipe.imagePrompt || recipe.title}. No text or watermarks in the image.`,
-          n: 1,
-          size: "1024x1024"
-        })
-      });
-
-      if (imgResponse.ok) {
-        const imgData = await imgResponse.json();
-        recipe.imageUrl = imgData.data?.[0]?.url || null;
-      } else {
-        const errBody = await imgResponse.text();
-        console.error("Image generation failed. Status:", imgResponse.status, "Body:", errBody);
-        recipe.imageDebug = `Status ${imgResponse.status}: ${errBody}`;
-      }
-    } catch (imgErr) {
-      console.error("Image generation request threw:", imgErr);
-      recipe.imageDebug = "Request threw: " + (imgErr.message || String(imgErr));
-    }
-
-    return res.status(200).json(recipe);
   } catch (err) {
-    console.error("Server error:", err);
+    console.error("Server error generating recipe:", err);
     return res.status(500).json({ error: "Something went wrong generating your recipe" });
   }
-                        }
+
+  // --- 4. Generate the dish image (same as before) ---
+  try {
+    const imgResponse = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-image-1",
+        prompt: `Editorial food photography style illustration, warm natural light, shallow depth of field: ${recipe.imagePrompt || recipe.title}. No text or watermarks in the image.`,
+        n: 1,
+        size: "1024x1024"
+      })
+    });
+
+    if (imgResponse.ok) {
+      const imgData = await imgResponse.json();
+      recipe.imageUrl = imgData.data?.[0]?.url || null;
+    } else {
+      const errBody = await imgResponse.text();
+      console.error("Image generation failed. Status:", imgResponse.status, "Body:", errBody);
+    }
+  } catch (imgErr) {
+    console.error("Image generation request threw:", imgErr);
+  }
+
+  // --- 5. Increment usage count now that generation succeeded ---
+  try {
+    await sql`
+      INSERT INTO usage (user_id, month, count)
+      VALUES (${userId}, ${month}, 1)
+      ON CONFLICT (user_id, month)
+      DO UPDATE SET count = usage.count + 1;
+    `;
+  } catch (incErr) {
+    // Don't fail the whole request if this fails - the user already has their recipe.
+    console.error("Failed to increment usage count:", incErr);
+  }
+
+  return res.status(200).json(recipe);
+}
