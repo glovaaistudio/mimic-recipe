@@ -1,5 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { verifyToken } from "@clerk/backend";
+
+export const maxDuration = 60;
 const FREE_LIMIT = 3;
 
 function currentMonthKey() {
