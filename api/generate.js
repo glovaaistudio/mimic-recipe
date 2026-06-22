@@ -1,8 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { createClerkClient } from "@clerk/backend";
-
-const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
-
+import { verifyToken } from "@clerk/backend";
 const FREE_LIMIT = 3;
 
 function currentMonthKey() {
@@ -23,7 +20,7 @@ export default async function handler(req, res) {
     if (!token) {
       return res.status(401).json({ error: "Please sign in to generate a recipe." });
     }
-    const verified = await clerkClient.verifyToken(token);
+    const verified = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY });
     userId = verified.sub;
   } catch (authErr) {
     console.error("Auth verification failed:", authErr);
