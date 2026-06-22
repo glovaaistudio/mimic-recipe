@@ -1,7 +1,8 @@
 import { sql } from "@vercel/postgres";
 import { verifyToken } from "@clerk/backend";
 
-export const maxDuration = 60;
+export const maxDuration = 30;
+
 const FREE_LIMIT = 3;
 
 function currentMonthKey() {
@@ -14,7 +15,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // --- 1. Verify the user is signed in ---
   let userId;
   try {
     const authHeader = req.headers.authorization || "";
@@ -29,7 +29,6 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "Please sign in to generate a recipe." });
   }
 
-  // --- 2. Check usage limit (free tier = 3 per month) ---
   const month = currentMonthKey();
   try {
     const usageResult = await sql`
@@ -37,8 +36,6 @@ export default async function handler(req, res) {
     `;
     const currentCount = usageResult.rows[0]?.count || 0;
 
-    // NOTE: premium-tier bypass will be added once Stripe is wired up.
-    // For now everyone is on the free tier limit.
     if (currentCount >= FREE_LIMIT) {
       return res.status(403).json({
         error: `You've used your ${FREE_LIMIT} free recipes this month. Upgrade to Premium for unlimited access.`,
@@ -50,7 +47,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Something went wrong checking your usage. Please try again." });
   }
 
-  // --- 3. Generate the recipe (same as before) ---
   const { ingredientText, imageBase64, imageMediaType } = req.body;
 
   const promptText = `You are a creative chef and recipe developer. ${
@@ -116,34 +112,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Something went wrong generating your recipe" });
   }
 
-  // --- 4. Generate the dish image (same as before) ---
-  try {
-    const imgResponse = await fetch("https://api.openai.com/v1/images/generations", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-image-1",
-        prompt: `Editorial food photography style illustration, warm natural light, shallow depth of field: ${recipe.imagePrompt || recipe.title}. No text or watermarks in the image.`,
-        n: 1,
-        size: "1024x1024"
-      })
-    });
-
-    if (imgResponse.ok) {
-      const imgData = await imgResponse.json();
-      recipe.imageUrl = imgData.data?.[0]?.url || null;
-    } else {
-      const errBody = await imgResponse.text();
-      console.error("Image generation failed. Status:", imgResponse.status, "Body:", errBody);
-    }
-  } catch (imgErr) {
-    console.error("Image generation request threw:", imgErr);
-  }
-
-  // --- 5. Increment usage count now that generation succeeded ---
   try {
     await sql`
       INSERT INTO usage (user_id, month, count)
@@ -152,7 +120,6 @@ export default async function handler(req, res) {
       DO UPDATE SET count = usage.count + 1;
     `;
   } catch (incErr) {
-    // Don't fail the whole request if this fails - the user already has their recipe.
     console.error("Failed to increment usage count:", incErr);
   }
 
