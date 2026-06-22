@@ -415,7 +415,19 @@ function App() {
     setRecipe(null);
     setServings(2);
     try {
+      if (!window.Clerk || !window.Clerk.session) {
+        setError("Your sign-in session isn't ready yet. Please wait a moment and try again, or sign out and back in.");
+        setLoading(false);
+        return;
+      }
+
       const token = await window.Clerk.session.getToken();
+
+      if (!token) {
+        setError("Couldn't verify your sign-in. Please sign out and back in, then try again.");
+        setLoading(false);
+        return;
+      }
 
       const body = tab === "text"
         ? { ingredientText }
