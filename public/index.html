@@ -456,6 +456,24 @@ function App() {
 
       const data = await response.json();
       setRecipe(data);
+      setLoading(false);
+
+      try {
+        const imgResponse = await fetch("/api/generate-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imagePrompt: data.imagePrompt, title: data.title })
+        });
+        if (imgResponse.ok) {
+          const imgData = await imgResponse.json();
+          if (imgData.imageUrl) {
+            setRecipe(prev => prev ? { ...prev, imageUrl: imgData.imageUrl } : prev);
+          }
+        }
+      } catch (imgErr) {
+        // Silent - the recipe still works perfectly without a photo.
+      }
+      return;
     } catch (err) {
       setError(err.message || "Something went wrong decoding that recipe. Check your ingredients and try again.");
     }
