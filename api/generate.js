@@ -127,15 +127,17 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Something went wrong generating your recipe" });
   }
 
-  try {
-    await sql`
-      INSERT INTO usage (user_id, month, count)
-      VALUES (${userId}, ${month}, 1)
-      ON CONFLICT (user_id, month)
-      DO UPDATE SET count = usage.count + 1;
-    `;
-  } catch (incErr) {
-    console.error("Failed to increment usage count:", incErr);
+  if (!isPremium) {
+    try {
+      await sql`
+        INSERT INTO usage (user_id, month, count)
+        VALUES (${userId}, ${month}, 1)
+        ON CONFLICT (user_id, month)
+        DO UPDATE SET count = usage.count + 1;
+      `;
+    } catch (incErr) {
+      console.error("Failed to increment usage count:", incErr);
+    }
   }
 
   return res.status(200).json(recipe);
