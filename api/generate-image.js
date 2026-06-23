@@ -24,7 +24,8 @@ export default async function handler(req, res) {
 
     if (imgResponse.ok) {
       const imgData = await imgResponse.json();
-      const imageUrl = imgData.data?.[0]?.url || null;
+      const b64 = imgData.data?.[0]?.b64_json || null;
+      const imageUrl = b64 ? `data:image/png;base64,${b64}` : null;
       return res.status(200).json({ imageUrl });
     } else {
       const errBody = await imgResponse.text();
