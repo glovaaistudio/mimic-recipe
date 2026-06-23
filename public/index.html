@@ -475,8 +475,6 @@ function App() {
           const imgData = await imgResponse.json();
           if (imgData.imageUrl) {
             setRecipe(prev => prev ? { ...prev, imageUrl: imgData.imageUrl } : prev);
-          } else {
-            setRecipe(prev => prev ? { ...prev, imageDebug: "Keys: " + JSON.stringify(imgData.debugKeys) + " | Raw: " + imgData.debugRaw } : prev);
           }
         }
       } catch (imgErr) {
