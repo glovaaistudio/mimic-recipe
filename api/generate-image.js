@@ -26,7 +26,11 @@ export default async function handler(req, res) {
       const imgData = await imgResponse.json();
       const b64 = imgData.data?.[0]?.b64_json || null;
       const imageUrl = b64 ? `data:image/png;base64,${b64}` : null;
-      return res.status(200).json({ imageUrl });
+      return res.status(200).json({
+        imageUrl,
+        debugKeys: imgData.data?.[0] ? Object.keys(imgData.data[0]) : "no data array",
+        debugRaw: JSON.stringify(imgData).slice(0, 300)
+      });
     } else {
       const errBody = await imgResponse.text();
       console.error("Image generation failed. Status:", imgResponse.status, "Body:", errBody);
