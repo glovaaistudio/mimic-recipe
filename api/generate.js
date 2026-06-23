@@ -29,22 +29,37 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "Please sign in to generate a recipe." });
   }
 
-  const month = currentMonthKey();
+  let isPremium = false;
   try {
-    const usageResult = await sql`
-      SELECT count FROM usage WHERE user_id = ${userId} AND month = ${month};
+    const subResult = await sql`
+      SELECT is_premium, expires_at FROM subscriptions WHERE user_id = ${userId};
     `;
-    const currentCount = usageResult.rows[0]?.count || 0;
-
-    if (currentCount >= FREE_LIMIT) {
-      return res.status(403).json({
-        error: `You've used your ${FREE_LIMIT} free recipes this month. Upgrade to Premium for unlimited access.`,
-        limitReached: true
-      });
+    const sub = subResult.rows[0];
+    if (sub && sub.is_premium) {
+      isPremium = !sub.expires_at || new Date(sub.expires_at) > new Date();
     }
-  } catch (dbErr) {
-    console.error("Usage check failed:", dbErr);
-    return res.status(500).json({ error: "Something went wrong checking your usage. Please try again." });
+  } catch (subErr) {
+    console.error("Premium status check failed:", subErr);
+  }
+
+  const month = currentMonthKey();
+  if (!isPremium) {
+    try {
+      const usageResult = await sql`
+        SELECT count FROM usage WHERE user_id = ${userId} AND month = ${month};
+      `;
+      const currentCount = usageResult.rows[0]?.count || 0;
+
+      if (currentCount >= FREE_LIMIT) {
+        return res.status(403).json({
+          error: `You've used your ${FREE_LIMIT} free recipes this month. Upgrade to Premium for unlimited access.`,
+          limitReached: true
+        });
+      }
+    } catch (dbErr) {
+      console.error("Usage check failed:", dbErr);
+      return res.status(500).json({ error: "Something went wrong checking your usage. Please try again." });
+    }
   }
 
   const { ingredientText, imageBase64, imageMediaType } = req.body;
