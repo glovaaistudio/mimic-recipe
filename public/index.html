@@ -528,7 +528,7 @@ function App() {
       ) : null,
 
       isSignedIn ? e("div", { style: styles.card },
-        e("div", { style: styles.usageNote }, "Free plan: 3 decodes a month \u00B7 ", e("a", { href: "#", style: { color: ORANGE_DARK, fontWeight: "700", textDecoration: "none" } }, "Go Premium for unlimited")),
+        e("div", { style: styles.usageNote }, "Free plan: 3 decodes a month \u00B7 ", e("a", { href: "#", onClick: (ev) => { ev.preventDefault(); handleUpgrade("monthly"); }, style: { color: ORANGE_DARK, fontWeight: "700", textDecoration: "none" } }, "Go Premium for unlimited")
         e("div", { style: styles.tabRow },
           e("button", { style: styles.tab(tab === "text"), onClick: () => { setTab("text"); setRecipe(null); setError(null); setLimitReached(false); } }, "\u270F\uFE0F Type ingredients"),
           e("button", { style: styles.tab(tab === "photo"), onClick: () => { setTab("photo"); setRecipe(null); setError(null); setLimitReached(false); } }, "\uD83D\uDCF7 Upload a photo")
