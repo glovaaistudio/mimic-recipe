@@ -41,7 +41,6 @@
 const { useState, useRef, useEffect } = React;
 const e = React.createElement;
 
-/* ---------- Design tokens ---------- */
 const CREAM = "#FBF6EC";
 const GREEN = "#1F4D3A";
 const GREEN_DARK = "#163829";
@@ -59,75 +58,36 @@ const MONO = "'JetBrains Mono', monospace";
 
 const styles = {
   page: { minHeight: "100vh", color: INK, fontFamily: SANS },
-
   header: {
-    background: GREEN,
-    padding: "14px 20px",
-    display: "grid",
-    gridTemplateColumns: "1fr auto 1fr",
-    alignItems: "center",
-    gap: "12px"
+    background: GREEN, padding: "14px 20px", display: "grid",
+    gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: "12px"
   },
   logoImg: { height: "40px", display: "block", gridColumn: "2", justifySelf: "center" },
   headerBtn: {
-    background: ORANGE,
-    color: "#fff",
-    border: "none",
-    borderRadius: "999px",
-    padding: "9px 16px",
-    fontSize: "13px",
-    fontWeight: "700",
-    fontFamily: SANS,
-    cursor: "pointer",
-    whiteSpace: "nowrap",
-    justifySelf: "end"
+    background: ORANGE, color: "#fff", border: "none", borderRadius: "999px",
+    padding: "9px 16px", fontSize: "13px", fontWeight: "700", fontFamily: SANS,
+    cursor: "pointer", whiteSpace: "nowrap", justifySelf: "end"
   },
   headerBtnGhost: {
-    background: "transparent",
-    color: "#fff",
-    border: "1.5px solid rgba(255,255,255,0.5)",
-    borderRadius: "999px",
-    padding: "8px 14px",
-    fontSize: "13px",
-    fontWeight: "600",
-    fontFamily: SANS,
-    cursor: "pointer",
-    whiteSpace: "nowrap",
-    justifySelf: "end"
+    background: "transparent", color: "#fff", border: "1.5px solid rgba(255,255,255,0.5)",
+    borderRadius: "999px", padding: "8px 14px", fontSize: "13px", fontWeight: "600",
+    fontFamily: SANS, cursor: "pointer", whiteSpace: "nowrap", justifySelf: "end"
   },
-
-  heroImgBand: {
-    width: "100%", aspectRatio: "688 / 640", overflow: "hidden", background: "#F3ECDA"
-  },
+  heroImgBand: { width: "100%", aspectRatio: "688 / 640", overflow: "hidden", background: "#F3ECDA" },
   heroImg: { width: "100%", height: "100%", display: "block", objectFit: "cover", objectPosition: "center" },
   heroWrap: { padding: "32px 24px 28px", maxWidth: "640px", margin: "0 auto" },
   heroTitle: {
-    fontFamily: SERIF,
-    fontWeight: "700",
-    fontSize: "34px",
-    lineHeight: "1.12",
-    color: INK,
-    margin: 0,
-    letterSpacing: "-0.5px"
+    fontFamily: SERIF, fontWeight: "700", fontSize: "34px", lineHeight: "1.12",
+    color: INK, margin: 0, letterSpacing: "-0.5px"
   },
   heroTitleAccent: { color: ORANGE, fontStyle: "italic" },
   heroSub: {
-    fontFamily: SANS,
-    fontSize: "14.5px",
-    color: INK_MUTED,
-    lineHeight: "1.55",
-    marginTop: "12px",
-    maxWidth: "440px"
+    fontFamily: SANS, fontSize: "14.5px", color: INK_MUTED, lineHeight: "1.55",
+    marginTop: "12px", maxWidth: "440px"
   },
-
   card: {
-    background: CARD,
-    borderRadius: "14px",
-    padding: "22px",
-    border: "1px solid " + LINE,
-    boxShadow: "0 4px 24px rgba(31,77,58,0.06)",
-    maxWidth: "600px",
-    margin: "0 auto 24px"
+    background: CARD, borderRadius: "14px", padding: "22px", border: "1px solid " + LINE,
+    boxShadow: "0 4px 24px rgba(31,77,58,0.06)", maxWidth: "600px", margin: "0 auto 24px"
   },
   tabRow: { display: "flex", gap: "8px", marginBottom: "20px" },
   tab: (active) => ({
@@ -153,7 +113,10 @@ const styles = {
   uploadIcon: { fontSize: "34px", marginBottom: "10px" },
   uploadText: { fontSize: "14px", color: INK_MUTED, marginBottom: "6px", fontFamily: SANS },
   previewImg: { width: "100%", maxHeight: "200px", objectFit: "cover", borderRadius: "9px", marginBottom: "14px" },
-  label: { fontSize: "13px", fontWeight: "600", color: INK_MUTED, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px", display: "block" },
+  label: {
+    fontSize: "13px", fontWeight: "600", color: INK_MUTED, textTransform: "uppercase",
+    letterSpacing: "0.5px", marginBottom: "8px", display: "block"
+  },
   btnSecondary: {
     width: "100%", padding: "11px", background: "transparent", color: INK_MUTED,
     border: "1.5px solid " + LINE, borderRadius: "9px", fontSize: "14px", fontWeight: "600",
@@ -179,12 +142,7 @@ const styles = {
     padding: "10px 16px", fontSize: "13.5px", fontWeight: "700", cursor: "pointer",
     fontFamily: SANS, marginTop: "10px"
   },
-
-  usageNote: {
-    fontSize: "13px", color: INK_MUTED, fontFamily: SANS, textAlign: "center",
-    marginBottom: "16px"
-  },
-
+  usageNote: { fontSize: "13px", color: INK_MUTED, fontFamily: SANS, textAlign: "center", marginBottom: "16px" },
   signInPrompt: {
     background: CARD, borderRadius: "14px", padding: "32px 24px", textAlign: "center",
     border: "1px solid " + LINE, maxWidth: "600px", margin: "0 auto 24px"
@@ -195,9 +153,10 @@ const styles = {
     background: GREEN, color: "#fff", border: "none", borderRadius: "9px",
     padding: "12px 24px", fontSize: "14.5px", fontWeight: "700", cursor: "pointer", fontFamily: SANS
   },
-
-  spinnerWrap: { display: "flex", flexDirection: "column", alignItems: "center", padding: "44px 20px", gap: "14px", color: INK_MUTED, fontFamily: SANS, fontSize: "14px" },
-
+  spinnerWrap: {
+    display: "flex", flexDirection: "column", alignItems: "center", padding: "44px 20px",
+    gap: "14px", color: INK_MUTED, fontFamily: SANS, fontSize: "14px"
+  },
   resultCard: {
     background: CARD, borderRadius: "16px", overflow: "hidden", border: "1px solid " + LINE,
     boxShadow: "0 4px 24px rgba(31,77,58,0.07)", maxWidth: "600px", margin: "0 auto 24px"
@@ -242,7 +201,6 @@ const styles = {
     marginTop: "18px", fontFamily: SANS
   },
   variationsText: { fontSize: "14px", color: INK, lineHeight: "1.65", fontFamily: SANS },
-
   premiumCard: {
     background: GREEN_DARK, borderRadius: "16px", padding: "22px", maxWidth: "600px",
     margin: "0 auto 28px", border: "1px solid " + GREEN
@@ -258,7 +216,6 @@ const styles = {
     padding: "12px 18px", fontSize: "14px", fontWeight: "700", cursor: "pointer",
     fontFamily: SANS, display: "inline-flex", alignItems: "center", gap: "8px"
   },
-
   footer: { textAlign: "center", padding: "18px 20px 36px", fontSize: "12px", color: "#A89D88", fontFamily: SANS }
 };
 
@@ -370,7 +327,29 @@ function App() {
 
   const [clerkReady, setClerkReady] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
   const [userName, setUserName] = useState(null);
+
+  const refreshPremiumStatus = async () => {
+    try {
+      if (!window.Clerk || !window.Clerk.session) {
+        setIsPremium(false);
+        return;
+      }
+      const token = await window.Clerk.session.getToken();
+      const response = await fetch("/api/check-premium", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        }
+      });
+      const data = await response.json();
+      setIsPremium(!!data.isPremium);
+    } catch (err) {
+      setIsPremium(false);
+    }
+  };
 
   useEffect(() => {
     function init() {
@@ -382,13 +361,36 @@ function App() {
         setClerkReady(true);
         setIsSignedIn(!!window.Clerk.user);
         setUserName(window.Clerk.user?.firstName || null);
+        if (window.Clerk.user) refreshPremiumStatus();
         window.Clerk.addListener(({ user }) => {
           setIsSignedIn(!!user);
           setUserName(user?.firstName || null);
+          if (user) {
+            refreshPremiumStatus();
+          } else {
+            setIsPremium(false);
+          }
         });
       });
     }
     init();
+  }, []);
+
+  const [upgrading, setUpgrading] = useState(false);
+  const [justUpgraded, setJustUpgraded] = useState(false);
+
+  useEffect(() => {
+    if (window.location.search.includes("upgraded=true")) {
+      setJustUpgraded(true);
+      const tryRefresh = (attempt) => {
+        setTimeout(async () => {
+          await refreshPremiumStatus();
+          if (attempt < 5) tryRefresh(attempt + 1);
+        }, 1500);
+      };
+      tryRefresh(0);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
   }, []);
 
   const handleSignIn = () => {
@@ -398,8 +400,6 @@ function App() {
   const handleSignOut = () => {
     if (window.Clerk) window.Clerk.signOut();
   };
-
-  const [upgrading, setUpgrading] = useState(false);
 
   const handleUpgrade = async (plan) => {
     if (!window.Clerk || !window.Clerk.session) {
@@ -526,7 +526,10 @@ function App() {
       ) : null,
 
       isSignedIn ? e("div", { style: styles.card },
-        e("div", { style: styles.usageNote }, "Free plan: 3 decodes a month \u00B7 ", e("a", { href: "#", onClick: (ev) => { ev.preventDefault(); handleUpgrade("monthly"); }, style: { color: ORANGE_DARK, fontWeight: "700", textDecoration: "none" } }, "Go Premium for unlimited")),
+        justUpgraded ? e("div", { style: { background: "#EFF7EE", border: "1px solid #B8DBC0", borderRadius: "9px", padding: "12px 14px", marginBottom: "16px", fontSize: "13.5px", color: "#1F4D3A", fontFamily: SANS, textAlign: "center" } }, "\uD83C\uDF89 Payment received \u2014 activating your Premium access now\u2026") : null,
+        isPremium
+          ? e("div", { style: { ...styles.usageNote, color: GOLD, fontWeight: "700" } }, "\u2B50 You're on Premium \u2014 unlimited decodes unlocked")
+          : e("div", { style: styles.usageNote }, "Free plan: 3 decodes a month \u00B7 ", e("a", { href: "#", onClick: (ev) => { ev.preventDefault(); handleUpgrade("monthly"); }, style: { color: ORANGE_DARK, fontWeight: "700", textDecoration: "none" } }, "Go Premium for unlimited")),
         e("div", { style: styles.tabRow },
           e("button", { style: styles.tab(tab === "text"), onClick: () => { setTab("text"); setRecipe(null); setError(null); setLimitReached(false); } }, "\u270F\uFE0F Type ingredients"),
           e("button", { style: styles.tab(tab === "photo"), onClick: () => { setTab("photo"); setRecipe(null); setError(null); setLimitReached(false); } }, "\uD83D\uDCF7 Upload a photo")
@@ -577,7 +580,7 @@ function App() {
       loading ? e("div", { style: { maxWidth: "600px", margin: "0 auto 24px", background: CARD, borderRadius: "16px", border: "1px solid " + LINE } }, e(Spinner)) : null,
       (recipe && !loading) ? e(React.Fragment, null,
         e(RecipeResult, { data: recipe, servings: servings, setServings: setServings }),
-        e(PremiumTeaser, { onUpgrade: handleUpgrade })
+        !isPremium ? e(PremiumTeaser, { onUpgrade: handleUpgrade }) : null
       ) : null,
       e("div", { style: styles.footer }, "Powered by Claude AI \u00B7 A Glova Studio concept")
     )
