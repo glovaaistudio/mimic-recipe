@@ -68,7 +68,15 @@ export default async function handler(req, res) {
     imageBase64
       ? "The user has uploaded a photo of a food product label or ingredients list. Read the ingredients from the image and generate a recipe to recreate it at home."
       : `A user has given you the ingredients list from a food product they love and want to recreate at home.\n\nIngredients provided: ${ingredientText}\n\nGenerate a recipe to recreate this at home.`
-  } Respond ONLY with a JSON object (no markdown, no backticks) with this exact structure:
+  } 
+
+IMPORTANT - this is a HOME recipe for a real person cooking in their kitchen, not a manufacturing specification:
+- Scale the recipe to a sensible, realistic home serving size (e.g. a proper cake for 8 people, a normal batch of sauce, a regular-sized smoothie) - do NOT just copy tiny per-unit amounts from a nutrition label.
+- Use ingredient names a home cook would recognise and buy at a supermarket (e.g. "eggs", "plain flour", "bicarbonate of soda", "vegetable oil") - NEVER use manufacturing or food-science terminology (e.g. avoid "pasteurized liquid egg", "E-500 equivalent", additive codes, or industrial processing terms). Translate any such terms into their everyday kitchen equivalent.
+- Round all measurements to amounts a person can actually measure with normal kitchen tools - whole or half/quarter units only (e.g. "2 eggs", "1 tsp baking powder", "1/2 tsp salt", "200g flour"). NEVER use decimal fractions of a teaspoon/tablespoon (e.g. never "0.3 tbsp" or "0.1 tsp") and never give implausibly tiny amounts like "0.2g salt".
+- If an ingredient appears in a trace/minor amount on a label (e.g. an emulsifier, acid regulator, or stabiliser), either substitute it with a common household equivalent (e.g. lemon juice for citric acid) or omit it if it's not meaningfully replicable at home, rather than listing it with an unworkable micro-quantity.
+
+Respond ONLY with a JSON object (no markdown, no backticks) with this exact structure:
 {
   "title": "Recipe name",
   "tagline": "One-line description",
