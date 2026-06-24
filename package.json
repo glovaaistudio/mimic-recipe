@@ -5,6 +5,8 @@
   "type": "module",
   "dependencies": {
     "@vercel/postgres": "^0.10.0",
-    "@clerk/backend": "^1.18.0"
+    "@clerk/backend": "^1.18.0",
+    "stripe": "^17.0.0",
+    "micro": "^10.0.1"
   }
 }
