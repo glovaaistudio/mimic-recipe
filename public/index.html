@@ -282,7 +282,6 @@ function RecipeResult({ data, servings, setServings }) {
     e("div", { style: styles.resultImgWrap },
       data.imageUrl
         ? e("img", { src: data.imageUrl, alt: data.title, style: styles.resultImg })
-        
         : e("div", { style: { width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px" } },
             e("div", { style: { width: "26px", height: "26px", border: "3px solid #DDD2BC", borderTop: "3px solid #E8602C", borderRadius: "50%", animation: "spin 0.8s linear infinite" } }),
             e("div", { style: { fontSize: "12px", color: "#A89D88", fontFamily: "'Inter', sans-serif" } }, "Plating your dish\u2026")
@@ -324,7 +323,7 @@ function RecipeResult({ data, servings, setServings }) {
   );
 }
 
- function PremiumTeaser({ onUpgrade }) {
+function PremiumTeaser({ onUpgrade }) {
   return e("div", { style: styles.premiumCard },
     e("span", { style: styles.premiumEyebrow }, "My Pantry \u00B7 Premium"),
     e("div", { style: styles.premiumTitle }, "Know what's missing before you shop"),
@@ -373,7 +372,6 @@ function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [userName, setUserName] = useState(null);
 
-  // Initialise Clerk once the script has loaded
   useEffect(() => {
     function init() {
       if (!window.Clerk) {
@@ -528,7 +526,7 @@ function App() {
       ) : null,
 
       isSignedIn ? e("div", { style: styles.card },
-        e("div", { style: styles.usageNote }, "Free plan: 3 decodes a month \u00B7 ", e("a", { href: "#", onClick: (ev) => { ev.preventDefault(); handleUpgrade("monthly"); }, style: { color: ORANGE_DARK, fontWeight: "700", textDecoration: "none" } }, "Go Premium for unlimited")
+        e("div", { style: styles.usageNote }, "Free plan: 3 decodes a month \u00B7 ", e("a", { href: "#", onClick: (ev) => { ev.preventDefault(); handleUpgrade("monthly"); }, style: { color: ORANGE_DARK, fontWeight: "700", textDecoration: "none" } }, "Go Premium for unlimited")),
         e("div", { style: styles.tabRow },
           e("button", { style: styles.tab(tab === "text"), onClick: () => { setTab("text"); setRecipe(null); setError(null); setLimitReached(false); } }, "\u270F\uFE0F Type ingredients"),
           e("button", { style: styles.tab(tab === "photo"), onClick: () => { setTab("photo"); setRecipe(null); setError(null); setLimitReached(false); } }, "\uD83D\uDCF7 Upload a photo")
@@ -571,8 +569,7 @@ function App() {
         limitReached ? e("div", { style: styles.limitBox },
           "\uD83D\uDD12 " + error,
           e("br"),
-          e("
-            e("button", { style: styles.limitBtn, onClick: () => handleUpgrade("monthly") }, "Upgrade to Premium")
+          e("button", { style: styles.limitBtn, onClick: () => handleUpgrade("monthly") }, "Upgrade to Premium")
         ) : (error ? e("div", { style: styles.errorBox }, "\u26A0\uFE0F " + error) : null)
 
       ) : null,
