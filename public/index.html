@@ -579,7 +579,7 @@ function App() {
       loading ? e("div", { style: { maxWidth: "600px", margin: "0 auto 24px", background: CARD, borderRadius: "16px", border: "1px solid " + LINE } }, e(Spinner)) : null,
       (recipe && !loading) ? e(React.Fragment, null,
         e(RecipeResult, { data: recipe, servings: servings, setServings: setServings }),
-        e(PremiumTeaser)
+        e(PremiumTeaser, { onUpgrade: handleUpgrade })
       ) : null,
       e("div", { style: styles.footer }, "Powered by Claude AI \u00B7 A Glova Studio concept")
     )
