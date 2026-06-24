@@ -401,6 +401,36 @@ function App() {
     if (window.Clerk) window.Clerk.signOut();
   };
 
+  const [upgrading, setUpgrading] = useState(false);
+
+  const handleUpgrade = async (plan) => {
+    if (!window.Clerk || !window.Clerk.session) {
+      handleSignIn();
+      return;
+    }
+    setUpgrading(true);
+    try {
+      const token = await window.Clerk.session.getToken();
+      const response = await fetch("/api/create-checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ plan })
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || "Something went wrong starting checkout. Please try again.");
+      }
+    } catch (err) {
+      alert("Something went wrong starting checkout. Please try again.");
+    }
+    setUpgrading(false);
+  };
+
   const handleImage = (file) => {
     if (!file || !file.type.startsWith("image/")) return;
     setImageFile(file);
