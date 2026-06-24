@@ -324,7 +324,7 @@ function RecipeResult({ data, servings, setServings }) {
   );
 }
 
-function PremiumTeaser() {
+ PremiumTeaser({ onUpgrade }) {
   return e("div", { style: styles.premiumCard },
     e("span", { style: styles.premiumEyebrow }, "My Pantry \u00B7 Premium"),
     e("div", { style: styles.premiumTitle }, "Know what's missing before you shop"),
