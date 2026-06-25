@@ -431,6 +431,9 @@ function App() {
       alert("Something went wrong opening your subscription settings.");
     }
   };
+    };
+
+  const handleSaveRecipe = async () => {
     if (!recipe || isSaved || !window.Clerk || !window.Clerk.session) return;
     try {
       const token = await window.Clerk.session.getToken();
