@@ -410,6 +410,27 @@ function App() {
   const [isSaved, setIsSaved] = useState(false);
 
   const handleSaveRecipe = async () => {
+    const handleManageSubscription = async () => {
+    if (!window.Clerk || !window.Clerk.session) return;
+    try {
+      const token = await window.Clerk.session.getToken();
+      const response = await fetch("/api/create-portal-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        }
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || "Something went wrong opening your subscription settings.");
+      }
+    } catch (err) {
+      alert("Something went wrong opening your subscription settings.");
+    }
+  };
     if (!recipe || isSaved || !window.Clerk || !window.Clerk.session) return;
     try {
       const token = await window.Clerk.session.getToken();
