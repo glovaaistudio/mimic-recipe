@@ -226,7 +226,7 @@ function Spinner({ text }) {
   );
 }
 
-function RecipeResult({ data, servings, setServings }) {
+function RecipeResult({ data, servings, setServings, onSave, isSaved }) {
   const scale = servings / (data.baseServings || 2);
   const scaleAmount = (amount) => {
     const num = parseFloat(amount);
@@ -245,8 +245,28 @@ function RecipeResult({ data, servings, setServings }) {
           )
     ),
     e("div", { style: styles.resultBody },
-      e("div", { style: styles.recipeTitle }, data.title),
-      e("div", { style: styles.recipeTagline }, data.tagline),
+      e("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" } },
+        e("div", { style: { flex: 1 } },
+          e("div", { style: styles.recipeTitle }, data.title),
+          e("div", { style: styles.recipeTagline }, data.tagline)
+        ),
+        e("button", {
+          onClick: onSave,
+          disabled: isSaved,
+          style: {
+            background: isSaved ? "#EFF3ED" : "transparent",
+            border: "1.5px solid " + (isSaved ? "#1F4D3A" : "#E8DFCB"),
+            borderRadius: "8px",
+            padding: "8px 10px",
+            fontSize: "13px",
+            fontWeight: "600",
+            color: isSaved ? "#1F4D3A" : "#6B6358",
+            cursor: isSaved ? "default" : "pointer",
+            whiteSpace: "nowrap",
+            fontFamily: "'Inter', sans-serif"
+          }
+        }, isSaved ? "\u2713 Saved" : "\uD83D\uDCBE Save")
+      ),
       e("div", { style: { marginBottom: "4px" } },
         (data.tags || []).map((t, i) => e("span", { key: i, style: styles.badge }, t))
       ),
@@ -376,8 +396,38 @@ function App() {
     init();
   }, []);
 
+  const handleSignIn = () => {
+    if (window.Clerk) window.Clerk.openSignIn({});
+  };
+
+  const handleSignOut = () => {
+    if (window.Clerk) window.Clerk.signOut();
+  };
+
   const [upgrading, setUpgrading] = useState(false);
   const [justUpgraded, setJustUpgraded] = useState(false);
+
+  const [isSaved, setIsSaved] = useState(false);
+
+  const handleSaveRecipe = async () => {
+    if (!recipe || isSaved || !window.Clerk || !window.Clerk.session) return;
+    try {
+      const token = await window.Clerk.session.getToken();
+      const response = await fetch("/api/saved-recipes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ recipe })
+      });
+      if (response.ok) {
+        setIsSaved(true);
+      }
+    } catch (err) {
+      // Silent failure - saving is a nice-to-have, not critical to the core experience.
+    }
+  };
 
   useEffect(() => {
     if (window.location.search.includes("upgraded=true")) {
@@ -392,14 +442,6 @@ function App() {
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
-
-  const handleSignIn = () => {
-    if (window.Clerk) window.Clerk.openSignIn({});
-  };
-
-  const handleSignOut = () => {
-    if (window.Clerk) window.Clerk.signOut();
-  };
 
   const handleUpgrade = async (plan) => {
     if (!window.Clerk || !window.Clerk.session) {
@@ -445,6 +487,7 @@ function App() {
     setError(null);
     setLimitReached(false);
     setRecipe(null);
+    setIsSaved(false);
     setServings(2);
     try {
       if (!window.Clerk || !window.Clerk.session) {
@@ -579,7 +622,7 @@ function App() {
 
       loading ? e("div", { style: { maxWidth: "600px", margin: "0 auto 24px", background: CARD, borderRadius: "16px", border: "1px solid " + LINE } }, e(Spinner)) : null,
       (recipe && !loading) ? e(React.Fragment, null,
-        e(RecipeResult, { data: recipe, servings: servings, setServings: setServings }),
+        e(RecipeResult, { data: recipe, servings: servings, setServings: setServings, onSave: handleSaveRecipe, isSaved: isSaved }),
         !isPremium ? e(PremiumTeaser, { onUpgrade: handleUpgrade }) : null
       ) : null,
       e("div", { style: styles.footer }, "Powered by Claude AI \u00B7 A Glova Studio concept")
