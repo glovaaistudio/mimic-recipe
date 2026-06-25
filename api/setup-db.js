@@ -34,6 +34,7 @@ export default async function handler(req, res) {
     `;
 
     return res.status(200).json({ success: true, message: "Database tables created successfully." });
+  } catch (err) {
     console.error("Database setup error:", err);
     return res.status(500).json({ error: "Failed to set up database", details: err.message });
   }
