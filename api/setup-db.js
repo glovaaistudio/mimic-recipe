@@ -19,9 +19,14 @@ export default async function handler(req, res) {
         user_id TEXT PRIMARY KEY,
         is_premium BOOLEAN NOT NULL DEFAULT FALSE,
         payment_source TEXT,
+        stripe_customer_id TEXT,
         expires_at TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
+    `;
+
+    await sql`
+      ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
     `;
 
     await sql`
