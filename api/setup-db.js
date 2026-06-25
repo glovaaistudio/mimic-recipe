@@ -24,8 +24,16 @@ export default async function handler(req, res) {
       );
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS saved_recipes (
+        id SERIAL PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        recipe_data JSONB NOT NULL,
+        saved_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+    `;
+
     return res.status(200).json({ success: true, message: "Database tables created successfully." });
-  } catch (err) {
     console.error("Database setup error:", err);
     return res.status(500).json({ error: "Failed to set up database", details: err.message });
   }
