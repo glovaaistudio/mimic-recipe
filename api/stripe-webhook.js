@@ -30,13 +30,14 @@ export default async function handler(req, res) {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       const userId = session.client_reference_id || session.metadata?.clerk_user_id;
+      const customerId = session.customer;
 
       if (userId) {
         await sql`
-          INSERT INTO subscriptions (user_id, is_premium, payment_source, updated_at)
-          VALUES (${userId}, TRUE, 'stripe', NOW())
+          INSERT INTO subscriptions (user_id, is_premium, payment_source, stripe_customer_id, updated_at)
+          VALUES (${userId}, TRUE, 'stripe', ${customerId}, NOW())
           ON CONFLICT (user_id)
-          DO UPDATE SET is_premium = TRUE, payment_source = 'stripe', updated_at = NOW();
+          DO UPDATE SET is_premium = TRUE, payment_source = 'stripe', stripe_customer_id = ${customerId}, updated_at = NOW();
         `;
         console.log("Premium activated for user:", userId);
       }
@@ -60,4 +61,4 @@ export default async function handler(req, res) {
     console.error("Webhook handler error:", err);
     return res.status(500).json({ error: "Webhook handler failed" });
   }
-        }
+}
