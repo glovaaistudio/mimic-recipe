@@ -309,13 +309,19 @@ function PremiumTeaser({ onUpgrade }) {
   );
 }
 
-function Header({ isSignedIn, userName, onSignIn, onSignOut }) {
+function Header({ isSignedIn, userName, onSignIn, onSignOut, onViewSaved, viewingSaved }) {
   return e("div", { style: styles.header },
     e("div"),
     e("img", { src: "/assets/logo.png", alt: "Mimic Recipe", style: styles.logoImg }),
-    isSignedIn
-      ? e("button", { style: styles.headerBtnGhost, onClick: onSignOut }, "Sign out" + (userName ? " (" + userName + ")" : ""))
-      : e("button", { style: styles.headerBtn, onClick: onSignIn }, "Sign in")
+    e("div", { style: { display: "flex", gap: "8px", justifySelf: "end", alignItems: "center" } },
+      isSignedIn ? e("button", {
+        style: { ...styles.headerBtnGhost, background: viewingSaved ? "rgba(255,255,255,0.15)" : "transparent" },
+        onClick: onViewSaved
+      }, "\uD83D\uDCD6 My Recipes") : null,
+      isSignedIn
+        ? e("button", { style: styles.headerBtnGhost, onClick: onSignOut }, "Sign out" + (userName ? " (" + userName + ")" : ""))
+        : e("button", { style: styles.headerBtn, onClick: onSignIn }, "Sign in")
+    )
   );
 }
 
