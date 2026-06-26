@@ -430,7 +430,10 @@ function App() {
   };
 
   const handleManageSubscription = async () => {
-    if (!window.Clerk || !window.Clerk.session) return;
+    if (!window.Clerk || !window.Clerk.session) {
+      alert("DEBUG: Clerk or session not available");
+      return;
+    }
     try {
       const token = await window.Clerk.session.getToken();
       const response = await fetch("/api/create-portal-session", {
@@ -440,14 +443,17 @@ function App() {
           "Authorization": "Bearer " + token
         }
       });
-      const data = await response.json();
+      const data = await response.json().catch((parseErr) => {
+        alert("DEBUG: Failed to parse response JSON: " + parseErr.message);
+        return {};
+      });
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || "Something went wrong opening your subscription settings.");
+        alert("DEBUG: Status " + response.status + " - " + (data.error || JSON.stringify(data)));
       }
     } catch (err) {
-      alert("Something went wrong opening your subscription settings.");
+      alert("DEBUG: " + (err.message || String(err)));
     }
   };
 
