@@ -301,16 +301,31 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved }) {
 }
 
 function SavedRecipesList({ recipes, loading, onSelect, onDelete }) {
+function SavedRecipesList({ recipes, loading, onSelect, onDelete, onBack }) {
+  const backBtn = e("button", {
+    onClick: onBack,
+    style: {
+      background: "transparent", border: "none", color: "#1F4D3A", fontWeight: "600",
+      fontSize: "13.5px", cursor: "pointer", padding: "0 0 14px 0", fontFamily: "'Inter', sans-serif",
+      display: "flex", alignItems: "center", gap: "4px"
+    }
+  }, "\u2190 Back");
+
   if (loading) {
-    return e("div", { style: { ...styles.card, textAlign: "center", color: "#6B6358", fontFamily: "'Inter', sans-serif", fontSize: "14px" } }, "Loading your saved recipes\u2026");
+    return e("div", { style: { ...styles.card, textAlign: "center", color: "#6B6358", fontFamily: "'Inter', sans-serif", fontSize: "14px" } },
+      backBtn,
+      "Loading your saved recipes\u2026"
+    );
   }
   if (!recipes || recipes.length === 0) {
     return e("div", { style: { ...styles.card, textAlign: "center" } },
+      backBtn,
       e("div", { style: { fontSize: "32px", marginBottom: "8px" } }, "\uD83D\uDCD6"),
       e("div", { style: { color: "#6B6358", fontFamily: "'Inter', sans-serif", fontSize: "14px" } }, "No saved recipes yet \u2014 decode something and tap Save!")
     );
   }
   return e("div", { style: styles.card },
+    backBtn,
     e("div", { style: { fontFamily: "'Fraunces', serif", fontSize: "18px", fontWeight: "700", color: "#1A1A16", marginBottom: "16px" } }, "My Saved Recipes"),
     recipes.map((item) =>
       e("div", {
