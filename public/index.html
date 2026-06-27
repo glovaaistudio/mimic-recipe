@@ -470,6 +470,7 @@ function App() {
 
   
   const handleManageSubscription = async () => {
+  const handleManageSubscription = async () => {
     if (!window.Clerk || !window.Clerk.session) return;
     try {
       const token = await window.Clerk.session.getToken();
@@ -488,6 +489,60 @@ function App() {
       }
     } catch (err) {
       alert("Something went wrong opening your subscription settings.");
+    }
+  };
+
+  const [viewingSaved, setViewingSaved] = useState(false);
+  const [savedRecipes, setSavedRecipes] = useState([]);
+  const [savedLoading, setSavedLoading] = useState(false);
+
+  const fetchSavedRecipes = async () => {
+    if (!window.Clerk || !window.Clerk.session) return;
+    setSavedLoading(true);
+    try {
+      const token = await window.Clerk.session.getToken();
+      const response = await fetch("/api/saved-recipes", {
+        method: "GET",
+        headers: { "Authorization": "Bearer " + token }
+      });
+      const data = await response.json();
+      setSavedRecipes(data.recipes || []);
+    } catch (err) {
+      setSavedRecipes([]);
+    }
+    setSavedLoading(false);
+  };
+
+  const handleViewSaved = () => {
+    const next = !viewingSaved;
+    setViewingSaved(next);
+    if (next) {
+      setRecipe(null);
+      fetchSavedRecipes();
+    }
+  };
+
+  const handleSelectSaved = (item) => {
+    setRecipe(item.recipe_data);
+    setIsSaved(true);
+    setViewingSaved(false);
+  };
+
+  const handleDeleteSaved = async (id) => {
+    if (!window.Clerk || !window.Clerk.session) return;
+    try {
+      const token = await window.Clerk.session.getToken();
+      await fetch("/api/saved-recipes", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ id })
+      });
+      setSavedRecipes(prev => prev.filter(r => r.id !== id));
+    } catch (err) {
+      // Silent failure
     }
   };
 
