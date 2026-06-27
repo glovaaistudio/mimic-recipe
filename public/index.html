@@ -675,7 +675,7 @@ function App() {
   const canGenerate = (tab === "text" ? ingredientText.trim().length > 10 : !!imageBase64) && isSignedIn;
 
   return e("div", { style: styles.page },
-    e(Header, { isSignedIn, userName, onSignIn: handleSignIn, onSignOut: handleSignOut }),
+    e(Header, { isSignedIn, userName, onSignIn: handleSignIn, onSignOut: handleSignOut, onViewSaved: handleViewSaved, viewingSaved: viewingSaved }),
     e(Hero),
     e("div", { style: { padding: "0 16px" } },
 
