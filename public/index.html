@@ -666,26 +666,14 @@ function App() {
         // Silent - the recipe still works perfectly without a photo.
       }
       return;
-    } catch (err) {
-      setError(err.message || "Something went wrong decoding that recipe. Check your ingredients and try again.");
-    }
-    setLoading(false);
-  };
+isSignedIn && viewingSaved ? e(SavedRecipesList, {
+        recipes: savedRecipes,
+        loading: savedLoading,
+        onSelect: handleSelectSaved,
+        onDelete: handleDeleteSaved
+      }) : null,
 
-  const canGenerate = (tab === "text" ? ingredientText.trim().length > 10 : !!imageBase64) && isSignedIn;
-
-  return e("div", { style: styles.page },
-    e(Header, { isSignedIn, userName, onSignIn: handleSignIn, onSignOut: handleSignOut, onViewSaved: handleViewSaved, viewingSaved: viewingSaved }),
-    e(Hero),
-    e("div", { style: { padding: "0 16px" } },
-
-      !isSignedIn && clerkReady ? e("div", { style: styles.signInPrompt },
-        e("div", { style: styles.signInTitle }, "Sign in to get started"),
-        e("p", { style: styles.signInText }, "Create a free account to get 3 recipe decodes every month, no card required \u2014 or go Premium for unlimited decodes plus My Pantry."),
-        e("button", { style: styles.signInBtn, onClick: handleSignIn }, "Sign in or create account")
-      ) : null,
-
-      isSignedIn ? e("div", { style: styles.card },
+      isSignedIn && !viewingSaved ? e("div", { style: styles.card },
         justUpgraded ? e("div", { style: { background: "#EFF7EE", border: "1px solid #B8DBC0", borderRadius: "9px", padding: "12px 14px", marginBottom: "16px", fontSize: "13.5px", color: "#1F4D3A", fontFamily: SANS, textAlign: "center" } }, "\uD83C\uDF89 Payment received \u2014 activating your Premium access now\u2026") : null,
         isPremium
           ? e("div", { style: { ...styles.usageNote, color: GOLD, fontWeight: "700" } }, "\u2B50 You're on Premium \u2014 unlimited decodes unlocked \u00B7 ", e("a", { href: "#", onClick: (ev) => { ev.preventDefault(); handleManageSubscription(); }, style: { color: INK_MUTED, fontWeight: "600", textDecoration: "underline", fontSize: "12px" } }, "Manage subscription"))
