@@ -700,12 +700,7 @@ function App() {
         onBack: () => setViewingSaved(false)
       }) : null,
 
-      isSignedIn && viewingSaved ? e(SavedRecipesList, {
-        recipes: savedRecipes,
-        loading: savedLoading,
-        onSelect: handleSelectSaved,
-        onDelete: handleDeleteSaved
-      }) : null,
+      
 
       isSignedIn && !viewingSaved ? e("div", { style: styles.card },
         justUpgraded ? e("div", { style: { background: "#EFF7EE", border: "1px solid #B8DBC0", borderRadius: "9px", padding: "12px 14px", marginBottom: "16px", fontSize: "13.5px", color: "#1F4D3A", fontFamily: SANS, textAlign: "center" } }, "\uD83C\uDF89 Payment received \u2014 activating your Premium access now\u2026") : null,
