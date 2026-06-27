@@ -333,39 +333,6 @@ function SavedRecipesList({ recipes, loading, onSelect, onDelete }) {
   );
 }
 
-function SavedRecipesList({ recipes, loading, onSelect, onDelete }) {
-  if (loading) {
-    return e("div", { style: { ...styles.card, textAlign: "center", color: "#6B6358", fontFamily: "'Inter', sans-serif", fontSize: "14px" } }, "Loading your saved recipes\u2026");
-  }
-  if (!recipes || recipes.length === 0) {
-    return e("div", { style: { ...styles.card, textAlign: "center" } },
-      e("div", { style: { fontSize: "32px", marginBottom: "8px" } }, "\uD83D\uDCD6"),
-      e("div", { style: { color: "#6B6358", fontFamily: "'Inter', sans-serif", fontSize: "14px" } }, "No saved recipes yet \u2014 decode something and tap Save!")
-    );
-  }
-  return e("div", { style: styles.card },
-    e("div", { style: { fontFamily: "'Fraunces', serif", fontSize: "18px", fontWeight: "700", color: "#1A1A16", marginBottom: "16px" } }, "My Saved Recipes"),
-    recipes.map((item) =>
-      e("div", {
-        key: item.id,
-        style: {
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "12px 0", borderBottom: "1px solid #E8DFCB"
-        }
-      },
-        e("div", { style: { flex: 1, cursor: "pointer" }, onClick: () => onSelect(item) },
-          e("div", { style: { fontFamily: "'Inter', sans-serif", fontWeight: "600", fontSize: "14.5px", color: "#1A1A16" } }, item.recipe_data.title),
-          e("div", { style: { fontFamily: "'Inter', sans-serif", fontSize: "12px", color: "#A89D88", marginTop: "2px" } }, new Date(item.saved_at).toLocaleDateString())
-        ),
-        e("button", {
-          onClick: () => onDelete(item.id),
-          style: { background: "transparent", border: "none", color: "#A4391A", fontSize: "13px", cursor: "pointer", padding: "6px", fontFamily: "'Inter', sans-serif" }
-        }, "Remove")
-      )
-    )
-  );
-}
-
 function PremiumTeaser({ onUpgrade }) {
   return e("div", { style: styles.premiumCard },
     e("span", { style: styles.premiumEyebrow }, "My Pantry \u00B7 Premium"),
@@ -501,8 +468,6 @@ function App() {
     }
   };
 
-  
-  
   const handleManageSubscription = async () => {
     if (!window.Clerk || !window.Clerk.session) return;
     try {
@@ -699,7 +664,26 @@ function App() {
         // Silent - the recipe still works perfectly without a photo.
       }
       return;
-isSignedIn && viewingSaved ? e(SavedRecipesList, {
+    } catch (err) {
+      setError(err.message || "Something went wrong decoding that recipe. Check your ingredients and try again.");
+    }
+    setLoading(false);
+  };
+
+  const canGenerate = (tab === "text" ? ingredientText.trim().length > 10 : !!imageBase64) && isSignedIn;
+
+  return e("div", { style: styles.page },
+    e(Header, { isSignedIn, userName, onSignIn: handleSignIn, onSignOut: handleSignOut, onViewSaved: handleViewSaved, viewingSaved: viewingSaved }),
+    e(Hero),
+    e("div", { style: { padding: "0 16px" } },
+
+      !isSignedIn && clerkReady ? e("div", { style: styles.signInPrompt },
+        e("div", { style: styles.signInTitle }, "Sign in to get started"),
+        e("p", { style: styles.signInText }, "Create a free account to get 3 recipe decodes every month, no card required \u2014 or go Premium for unlimited decodes plus My Pantry."),
+        e("button", { style: styles.signInBtn, onClick: handleSignIn }, "Sign in or create account")
+      ) : null,
+
+      isSignedIn && viewingSaved ? e(SavedRecipesList, {
         recipes: savedRecipes,
         loading: savedLoading,
         onSelect: handleSelectSaved,
