@@ -842,7 +842,7 @@ function App() {
             display: "block"
           }
         }, "\u2190 Back to Mimic Recipe") : null,
-        e(RecipeResult, { data: recipe, servings: servings, setServings: setServings, onSave: handleSaveRecipe, isSaved: isSaved }),
+        e(RecipeResult, { data: recipe, servings: servings, setServings: setServings, onSave: handleSaveRecipe, isSaved: isSaved, isPremium: isPremium }),
         !isPremium ? e(PremiumTeaser, { onUpgrade: handleUpgrade }) : null
       ) : null,
       e("div", { style: styles.footer }, "Powered by Claude AI \u00B7 A Glova Studio concept")
