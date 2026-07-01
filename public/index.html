@@ -306,7 +306,6 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved }) {
   );
 }
 
-
 function SavedRecipesList({ recipes, loading, onSelect, onDelete, onBack }) {
   const backBtn = e("button", {
     onClick: onBack,
@@ -466,11 +465,9 @@ function App() {
 
   const [upgrading, setUpgrading] = useState(false);
   const [justUpgraded, setJustUpgraded] = useState(false);
-
   const [isSaved, setIsSaved] = useState(false);
   const [openedFromSaved, setOpenedFromSaved] = useState(false);
 
-  const handleSaveRecipe = async () => {
   const handleSaveRecipe = async () => {
     if (!recipe || isSaved) return;
     try {
@@ -719,8 +716,6 @@ function App() {
         onDelete: handleDeleteSaved,
         onBack: () => setViewingSaved(false)
       }) : null,
-
-      
 
       isSignedIn && !viewingSaved ? e("div", { style: styles.card },
         justUpgraded ? e("div", { style: { background: "#EFF7EE", border: "1px solid #B8DBC0", borderRadius: "9px", padding: "12px 14px", marginBottom: "16px", fontSize: "13.5px", color: "#1F4D3A", fontFamily: SANS, textAlign: "center" } }, "\uD83C\uDF89 Payment received \u2014 activating your Premium access now\u2026") : null,
