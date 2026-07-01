@@ -573,6 +573,17 @@ function App() {
           style: { background: "transparent", border: "none", color: "#1F4D3A", fontWeight: "600", fontSize: "13.5px", cursor: "pointer", padding: "0 0 10px 0", fontFamily: "'Inter', sans-serif", display: "block" }
         }, "\u2190 Back to Mimic Recipe") : null,
         e(RecipeResult, { data: recipe, servings, setServings, onSave: handleSaveRecipe, isSaved, isPremium }),
+        e("div", { style: { maxWidth: "600px", margin: "0 auto 16px", textAlign: "center" } },
+          e("button", {
+            onClick: handleRegenerate,
+            disabled: regenerating,
+            style: {
+              background: "transparent", border: "1.5px solid " + LINE, borderRadius: "9px",
+              padding: "11px 20px", fontSize: "14px", fontWeight: "600", cursor: regenerating ? "not-allowed" : "pointer",
+              color: regenerating ? INK_MUTED : INK, fontFamily: SANS
+            }
+          }, regenerating ? "Finding a different version\u2026" : "\uD83D\uDD04 Try a different version")
+        ),
         !isPremium ? e(PremiumTeaser, { onUpgrade: handleUpgrade }) : null
       ) : null,
 
