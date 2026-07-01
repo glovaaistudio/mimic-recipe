@@ -266,7 +266,7 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
           e("div", { style: styles.recipeTagline }, data.tagline)
         ),
         e("button", {
-          onClick: onSave,
+          onClick: handleSave,
           disabled: isSaved,
           style: {
             background: isSaved ? "#EFF3ED" : "transparent",
