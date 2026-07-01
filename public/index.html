@@ -363,6 +363,50 @@ function App() {
     } catch (err) {}
   };
 
+  const handleRegenerate = async () => {
+    if (regenerating || loading) return;
+    setRegenerating(true);
+    setRecipe(null);
+    setIsSaved(false);
+    setOpenedFromSaved(false);
+    setServings(2);
+    try {
+      if (!window.Clerk || !window.Clerk.session) { handleSignIn(); return; }
+      const token = await window.Clerk.session.getToken({ skipCache: true });
+      const body = tab === "text"
+        ? { ingredientText, regenerate: true }
+        : { imageBase64, imageMediaType: imageFile ? imageFile.type : "image/jpeg", regenerate: true };
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify(body)
+      });
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        if (errData.limitReached) { setLimitReached(true); setError(errData.error); }
+        setRegenerating(false); return;
+      }
+      const data = await response.json();
+      setRecipe(data);
+      setRegenerating(false);
+      try {
+        const imgResponse = await fetch("/api/generate-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imagePrompt: data.imagePrompt, title: data.title })
+        });
+        if (imgResponse.ok) {
+          const imgData = await imgResponse.json();
+          if (imgData.imageUrl) { setRecipe(prev => prev ? { ...prev, imageUrl: imgData.imageUrl } : prev); }
+        }
+      } catch (imgErr) {}
+    } catch (err) {
+      setError("Something went wrong generating an alternative. Please try again.");
+      setRegenerating(false);
+    }
+  };
+
+  const handleManageSubscription = async () => {
   const handleManageSubscription = async () => {
     if (!window.Clerk || !window.Clerk.session) return;
     try {
