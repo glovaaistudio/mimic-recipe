@@ -401,7 +401,7 @@ function App() {
         }
       } catch (imgErr) {}
     } catch (err) {
-      setError("Something went wrong generating an alternative. Please try again.");
+      setError("DEBUG: " + (err.message || String(err)));
       setRegenerating(false);
     }
   };
