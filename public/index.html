@@ -400,7 +400,7 @@ function App() {
         }
       } catch (imgErr) {}
     } catch (err) {
-      setError("DEBUG: " + (err.message || String(err)));
+      setError("Something went wrong generating an alternative. Please try again.");
       setRegenerating(false);
     }
   };
