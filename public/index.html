@@ -471,10 +471,13 @@ function App() {
   const [openedFromSaved, setOpenedFromSaved] = useState(false);
 
   const handleSaveRecipe = async () => {
-    if (!recipe || isSaved || !window.Clerk || !window.Clerk.session) return;
+    if (!recipe || isSaved) return;
     try {
-      const token = await window.Clerk.session.getToken();
-      const response = await fetch("/api/saved-recipes", {
+      if (!window.Clerk || !window.Clerk.session) {
+        handleSignIn();
+        return;
+      }
+      const token = await window.Clerk.session.getToken({ skipCache: true });
         method: "POST",
         headers: {
           "Content-Type": "application/json",
