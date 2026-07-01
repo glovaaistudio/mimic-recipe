@@ -346,12 +346,13 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
         e("span", { style: { fontSize: "13.5px", color: INK_MUTED, fontFamily: SANS } }, "people")
       ),
       e("div", { style: styles.sectionHead }, "Ingredients"),
-      (data.ingredients || []).map((ing, i) =>
-        e("div", { key: i, style: styles.ingredientRow },
+      (data.ingredients || []).map((ing, i) => {
+        const { amount, unit } = displayIngredient(ing);
+        return e("div", { key: i, style: styles.ingredientRow },
           e("span", null, ing.name),
-          e("span", { style: styles.ingredientAmount }, scaleAmount(ing.amount) + " " + ing.unit)
-        )
-      ),
+          e("span", { style: styles.ingredientAmount }, amount + " " + unit)
+        );
+      }),
       e("div", { style: styles.sectionHead }, "Method"),
       (data.steps || []).map((step, i) =>
         e("div", { key: i, style: styles.stepRow },
