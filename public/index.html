@@ -366,7 +366,6 @@ function App() {
   const handleRegenerate = async () => {
     if (regenerating || loading) return;
     setRegenerating(true);
-    setRecipe(null);
     setIsSaved(false);
     setOpenedFromSaved(false);
     setServings(2);
