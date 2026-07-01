@@ -759,6 +759,14 @@ function App() {
 
       loading ? e("div", { style: { maxWidth: "600px", margin: "0 auto 24px", background: CARD, borderRadius: "16px", border: "1px solid " + LINE } }, e(Spinner)) : null,
       (recipe && !loading) ? e(React.Fragment, null,
+        openedFromSaved ? e("button", {
+          onClick: () => { setRecipe(null); setOpenedFromSaved(false); },
+          style: {
+            background: "transparent", border: "none", color: "#1F4D3A", fontWeight: "600",
+            fontSize: "13.5px", cursor: "pointer", padding: "0 0 10px 0", fontFamily: "'Inter', sans-serif",
+            display: "block"
+          }
+        }, "\u2190 Back to Mimic Recipe") : null,
         e(RecipeResult, { data: recipe, servings: servings, setServings: setServings, onSave: handleSaveRecipe, isSaved: isSaved }),
         !isPremium ? e(PremiumTeaser, { onUpgrade: handleUpgrade }) : null
       ) : null,
