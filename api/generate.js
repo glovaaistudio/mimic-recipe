@@ -1,4 +1,4 @@
-  import { sql } from "@vercel/postgres";
+import { sql } from "@vercel/postgres";
 import { verifyToken } from "@clerk/backend";
 
 export const maxDuration = 30;
@@ -49,7 +49,6 @@ export default async function handler(req, res) {
         SELECT count FROM usage WHERE user_id = ${userId} AND month = ${month};
       `;
       const currentCount = usageResult.rows[0]?.count || 0;
-
       if (currentCount >= FREE_LIMIT) {
         return res.status(403).json({
           error: `You've used your ${FREE_LIMIT} free recipes this month. Upgrade to Premium for unlimited access.`,
@@ -62,20 +61,24 @@ export default async function handler(req, res) {
     }
   }
 
-  const { ingredientText, imageBase64, imageMediaType } = req.body;
+  const { ingredientText, imageBase64, imageMediaType, regenerate } = req.body;
+
+  const regenerateInstruction = regenerate
+    ? "\n\nIMPORTANT: The user has already seen one recipe for these ingredients and wants a DIFFERENT version. Take a distinctly different approach — different cuisine style, different cooking technique, different form factor (e.g. if you made a smoothie, make a sorbet; if you made a cake, make muffins; if you made a pasta sauce, make a soup). Do NOT simply vary the spices or swap one ingredient — the overall dish concept must be genuinely different."
+    : "";
 
   const promptText = `You are a creative chef and recipe developer. ${
     imageBase64
       ? "The user has uploaded a photo of a food product label or ingredients list. Read the ingredients from the image and generate a recipe to recreate it at home."
       : `A user has given you the ingredients list from a food product they love and want to recreate at home.\n\nIngredients provided: ${ingredientText}\n\nGenerate a recipe to recreate this at home.`
-  } 
+  }${regenerateInstruction}
 
 IMPORTANT - this is a HOME recipe for a real person cooking in their kitchen, not a manufacturing specification:
 - Scale the recipe to a sensible, realistic home serving size (e.g. a proper cake for 8 people, a normal batch of sauce, a regular-sized smoothie) - do NOT just copy tiny per-unit amounts from a nutrition label.
-- Use ingredient names a home cook would recognise and buy at a supermarket (e.g. "eggs", "plain flour", "bicarbonate of soda", "vegetable oil") - NEVER use manufacturing or food-science terminology (e.g. avoid "pasteurized liquid egg", "E-500 equivalent", additive codes, or industrial processing terms). Translate any such terms into their everyday kitchen equivalent.
-- BEFORE writing each "amount" value, check it against this exact allowed list: whole numbers (1, 2, 3...), or these exact fractions only: 0.25, 0.5, 0.75 (for teaspoons/tablespoons/pinches/whole items like eggs), or any whole multiple of 5 (for grams/ml, e.g. 5, 10, 50, 100, 150, 200, 250). If your first instinct produces any other number (anything like 0.8, 8.3, 37.5, 62.5, 0.3, 12.5), you MUST round it to the nearest value from this allowed list before writing it down. NEVER output a number outside this list.
-- This applies to EVERY ingredient without exception, including small quantities like raising agents, salt, and flavourings - not just the main bulk ingredients.
-- If an ingredient appears in a trace/minor amount on a label (e.g. an emulsifier, acid regulator, or stabiliser), either substitute it with a common household equivalent (e.g. lemon juice for citric acid) or omit it if it's not meaningfully replicable at home, rather than listing it with an unworkable micro-quantity.
+- Use ingredient names a home cook would recognise and buy at a supermarket (e.g. "eggs", "plain flour", "bicarbonate of soda", "vegetable oil") - NEVER use manufacturing or food-science terminology. Translate any such terms into their everyday kitchen equivalent.
+- BEFORE writing each "amount" value, check it against this exact allowed list: whole numbers (1, 2, 3...), or these exact fractions only: 0.25, 0.5, 0.75 (for teaspoons/tablespoons/pinches/whole items like eggs), or any whole multiple of 5 (for grams/ml, e.g. 5, 10, 50, 100, 150, 200, 250). If your first instinct produces any other number, you MUST round it to the nearest value from this allowed list. NEVER output a number outside this list.
+- This applies to EVERY ingredient without exception.
+- If an ingredient appears in a trace/minor amount on a label, either substitute it with a common household equivalent or omit it.
 
 Respond ONLY with a JSON object (no markdown, no backticks) with this exact structure:
 {
@@ -150,4 +153,4 @@ Respond ONLY with a JSON object (no markdown, no backticks) with this exact stru
   }
 
   return res.status(200).json(recipe);
-                                               }
+      }
