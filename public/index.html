@@ -9,8 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-
-<!-- Clerk authentication SDK (script-tag method, no build step needed) -->
 <script
   async
   crossorigin="anonymous"
@@ -18,21 +16,17 @@
   src="https://game-tiger-13.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
   type="text/javascript"
 ></script>
-
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
     font-family: 'Inter', system-ui, sans-serif;
     background: #FBF6EC;
-    background-image:
-      radial-gradient(circle at 1px 1px, rgba(31,77,58,0.04) 1px, transparent 0);
+    background-image: radial-gradient(circle at 1px 1px, rgba(31,77,58,0.04) 1px, transparent 0);
     background-size: 22px 22px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  @media (prefers-reduced-motion: reduce) {
-    * { animation: none !important; transition: none !important; }
-  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
@@ -51,171 +45,66 @@ const INK = "#1A1A16";
 const INK_MUTED = "#6B6358";
 const CARD = "#FFFFFF";
 const LINE = "#E8DFCB";
-
 const SERIF = "'Fraunces', Georgia, serif";
 const SANS = "'Inter', system-ui, sans-serif";
 const MONO = "'JetBrains Mono', monospace";
 
 const styles = {
   page: { minHeight: "100vh", color: INK, fontFamily: SANS },
-  header: {
-    background: GREEN, padding: "14px 20px", display: "grid",
-    gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: "12px"
-  },
+  header: { background: GREEN, padding: "14px 20px", display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: "12px" },
   logoImg: { height: "40px", display: "block", gridColumn: "2", justifySelf: "center" },
-  headerBtn: {
-    background: ORANGE, color: "#fff", border: "none", borderRadius: "999px",
-    padding: "9px 16px", fontSize: "13px", fontWeight: "700", fontFamily: SANS,
-    cursor: "pointer", whiteSpace: "nowrap", justifySelf: "end"
-  },
-  headerBtnGhost: {
-    background: "transparent", color: "#fff", border: "1.5px solid rgba(255,255,255,0.5)",
-    borderRadius: "999px", padding: "8px 14px", fontSize: "13px", fontWeight: "600",
-    fontFamily: SANS, cursor: "pointer", whiteSpace: "nowrap", justifySelf: "end"
-  },
+  headerBtn: { background: ORANGE, color: "#fff", border: "none", borderRadius: "999px", padding: "9px 16px", fontSize: "13px", fontWeight: "700", fontFamily: SANS, cursor: "pointer", whiteSpace: "nowrap", justifySelf: "end" },
+  headerBtnGhost: { background: "transparent", color: "#fff", border: "1.5px solid rgba(255,255,255,0.5)", borderRadius: "999px", padding: "8px 14px", fontSize: "13px", fontWeight: "600", fontFamily: SANS, cursor: "pointer", whiteSpace: "nowrap", justifySelf: "end" },
   heroImgBand: { width: "100%", aspectRatio: "688 / 640", overflow: "hidden", background: "#F3ECDA" },
   heroImg: { width: "100%", height: "100%", display: "block", objectFit: "cover", objectPosition: "center" },
   heroWrap: { padding: "32px 24px 28px", maxWidth: "640px", margin: "0 auto" },
-  heroTitle: {
-    fontFamily: SERIF, fontWeight: "700", fontSize: "34px", lineHeight: "1.12",
-    color: INK, margin: 0, letterSpacing: "-0.5px"
-  },
+  heroTitle: { fontFamily: SERIF, fontWeight: "700", fontSize: "34px", lineHeight: "1.12", color: INK, margin: 0, letterSpacing: "-0.5px" },
   heroTitleAccent: { color: ORANGE, fontStyle: "italic" },
-  heroSub: {
-    fontFamily: SANS, fontSize: "14.5px", color: INK_MUTED, lineHeight: "1.55",
-    marginTop: "12px", maxWidth: "440px"
-  },
-  card: {
-    background: CARD, borderRadius: "14px", padding: "22px", border: "1px solid " + LINE,
-    boxShadow: "0 4px 24px rgba(31,77,58,0.06)", maxWidth: "600px", margin: "0 auto 24px"
-  },
+  heroSub: { fontFamily: SANS, fontSize: "14.5px", color: INK_MUTED, lineHeight: "1.55", marginTop: "12px", maxWidth: "440px" },
+  card: { background: CARD, borderRadius: "14px", padding: "22px", border: "1px solid " + LINE, boxShadow: "0 4px 24px rgba(31,77,58,0.06)", maxWidth: "600px", margin: "0 auto 24px" },
   tabRow: { display: "flex", gap: "8px", marginBottom: "20px" },
-  tab: (active) => ({
-    flex: 1, padding: "11px", border: "1.5px solid " + (active ? GREEN : LINE),
-    borderRadius: "9px", fontWeight: "600", fontSize: "13.5px", cursor: "pointer",
-    background: active ? GREEN : "transparent", color: active ? "#fff" : INK_MUTED,
-    fontFamily: SANS, transition: "all 0.15s"
-  }),
-  eyebrow: {
-    fontFamily: MONO, fontSize: "11px", fontWeight: "600", color: GREEN,
-    textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px", display: "block"
-  },
-  textarea: {
-    width: "100%", minHeight: "110px", border: "1.5px solid " + LINE, borderRadius: "9px",
-    padding: "13px", fontSize: "14.5px", fontFamily: SANS, color: INK, background: CREAM,
-    resize: "vertical", outline: "none", boxSizing: "border-box", lineHeight: "1.6"
-  },
-  uploadArea: (dragging) => ({
-    border: "2px dashed " + (dragging ? ORANGE : "#D9CCAE"), borderRadius: "11px",
-    padding: "36px 20px", textAlign: "center", cursor: "pointer",
-    background: dragging ? "#FBEFE6" : CREAM
-  }),
+  tab: (active) => ({ flex: 1, padding: "11px", border: "1.5px solid " + (active ? GREEN : LINE), borderRadius: "9px", fontWeight: "600", fontSize: "13.5px", cursor: "pointer", background: active ? GREEN : "transparent", color: active ? "#fff" : INK_MUTED, fontFamily: SANS, transition: "all 0.15s" }),
+  eyebrow: { fontFamily: MONO, fontSize: "11px", fontWeight: "600", color: GREEN, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px", display: "block" },
+  textarea: { width: "100%", minHeight: "110px", border: "1.5px solid " + LINE, borderRadius: "9px", padding: "13px", fontSize: "14.5px", fontFamily: SANS, color: INK, background: CREAM, resize: "vertical", outline: "none", boxSizing: "border-box", lineHeight: "1.6" },
+  uploadArea: (dragging) => ({ border: "2px dashed " + (dragging ? ORANGE : "#D9CCAE"), borderRadius: "11px", padding: "36px 20px", textAlign: "center", cursor: "pointer", background: dragging ? "#FBEFE6" : CREAM }),
   uploadIcon: { fontSize: "34px", marginBottom: "10px" },
   uploadText: { fontSize: "14px", color: INK_MUTED, marginBottom: "6px", fontFamily: SANS },
   previewImg: { width: "100%", maxHeight: "200px", objectFit: "cover", borderRadius: "9px", marginBottom: "14px" },
-  label: {
-    fontSize: "13px", fontWeight: "600", color: INK_MUTED, textTransform: "uppercase",
-    letterSpacing: "0.5px", marginBottom: "8px", display: "block"
-  },
-  btnSecondary: {
-    width: "100%", padding: "11px", background: "transparent", color: INK_MUTED,
-    border: "1.5px solid " + LINE, borderRadius: "9px", fontSize: "14px", fontWeight: "600",
-    cursor: "pointer", fontFamily: SANS, marginTop: "0"
-  },
-  generateBtn: (disabled) => ({
-    width: "100%", padding: "14px", background: disabled ? "#E3D9C4" : ORANGE, color: "#fff",
-    border: "none", borderRadius: "10px", fontSize: "15.5px", fontWeight: "700",
-    cursor: disabled ? "not-allowed" : "pointer", marginTop: "18px", fontFamily: SANS,
-    letterSpacing: "0.2px"
-  }),
-  errorBox: {
-    background: "#FBEAE3", border: "1px solid #EFC4AE", borderRadius: "9px",
-    padding: "13px", color: "#A4391A", fontSize: "13.5px", marginTop: "14px", fontFamily: SANS
-  },
-  limitBox: {
-    background: "#FBF1E0", border: "1px solid " + GOLD, borderRadius: "9px",
-    padding: "16px", color: "#6E4F12", fontSize: "14px", marginTop: "14px", fontFamily: SANS,
-    lineHeight: "1.6"
-  },
-  limitBtn: {
-    background: ORANGE, color: "#fff", border: "none", borderRadius: "8px",
-    padding: "10px 16px", fontSize: "13.5px", fontWeight: "700", cursor: "pointer",
-    fontFamily: SANS, marginTop: "10px"
-  },
+  label: { fontSize: "13px", fontWeight: "600", color: INK_MUTED, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px", display: "block" },
+  btnSecondary: { width: "100%", padding: "11px", background: "transparent", color: INK_MUTED, border: "1.5px solid " + LINE, borderRadius: "9px", fontSize: "14px", fontWeight: "600", cursor: "pointer", fontFamily: SANS, marginTop: "0" },
+  generateBtn: (disabled) => ({ width: "100%", padding: "14px", background: disabled ? "#E3D9C4" : ORANGE, color: "#fff", border: "none", borderRadius: "10px", fontSize: "15.5px", fontWeight: "700", cursor: disabled ? "not-allowed" : "pointer", marginTop: "18px", fontFamily: SANS, letterSpacing: "0.2px" }),
+  errorBox: { background: "#FBEAE3", border: "1px solid #EFC4AE", borderRadius: "9px", padding: "13px", color: "#A4391A", fontSize: "13.5px", marginTop: "14px", fontFamily: SANS },
+  limitBox: { background: "#FBF1E0", border: "1px solid " + GOLD, borderRadius: "9px", padding: "16px", color: "#6E4F12", fontSize: "14px", marginTop: "14px", fontFamily: SANS, lineHeight: "1.6" },
+  limitBtn: { background: ORANGE, color: "#fff", border: "none", borderRadius: "8px", padding: "10px 16px", fontSize: "13.5px", fontWeight: "700", cursor: "pointer", fontFamily: SANS, marginTop: "10px" },
   usageNote: { fontSize: "13px", color: INK_MUTED, fontFamily: SANS, textAlign: "center", marginBottom: "16px" },
-  signInPrompt: {
-    background: CARD, borderRadius: "14px", padding: "32px 24px", textAlign: "center",
-    border: "1px solid " + LINE, maxWidth: "600px", margin: "0 auto 24px"
-  },
+  signInPrompt: { background: CARD, borderRadius: "14px", padding: "32px 24px", textAlign: "center", border: "1px solid " + LINE, maxWidth: "600px", margin: "0 auto 24px" },
   signInTitle: { fontFamily: SERIF, fontSize: "20px", fontWeight: "700", color: INK, marginBottom: "8px" },
   signInText: { fontSize: "14px", color: INK_MUTED, marginBottom: "18px", fontFamily: SANS, lineHeight: "1.6" },
-  signInBtn: {
-    background: GREEN, color: "#fff", border: "none", borderRadius: "9px",
-    padding: "12px 24px", fontSize: "14.5px", fontWeight: "700", cursor: "pointer", fontFamily: SANS
-  },
-  spinnerWrap: {
-    display: "flex", flexDirection: "column", alignItems: "center", padding: "44px 20px",
-    gap: "14px", color: INK_MUTED, fontFamily: SANS, fontSize: "14px"
-  },
-  resultCard: {
-    background: CARD, borderRadius: "16px", overflow: "hidden", border: "1px solid " + LINE,
-    boxShadow: "0 4px 24px rgba(31,77,58,0.07)", maxWidth: "600px", margin: "0 auto 24px"
-  },
+  signInBtn: { background: GREEN, color: "#fff", border: "none", borderRadius: "9px", padding: "12px 24px", fontSize: "14.5px", fontWeight: "700", cursor: "pointer", fontFamily: SANS },
+  spinnerWrap: { display: "flex", flexDirection: "column", alignItems: "center", padding: "44px 20px", gap: "14px", color: INK_MUTED, fontFamily: SANS, fontSize: "14px" },
+  resultCard: { background: CARD, borderRadius: "16px", overflow: "hidden", border: "1px solid " + LINE, boxShadow: "0 4px 24px rgba(31,77,58,0.07)", maxWidth: "600px", margin: "0 auto 24px" },
   resultImgWrap: { width: "100%", aspectRatio: "4/3", background: "#EFE7D4", position: "relative", overflow: "hidden" },
   resultImg: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
   resultBody: { padding: "24px" },
   recipeTitle: { fontFamily: SERIF, fontSize: "23px", fontWeight: "700", color: INK, marginBottom: "5px", lineHeight: "1.2" },
   recipeTagline: { fontFamily: SANS, fontSize: "13.5px", color: INK_MUTED, marginBottom: "16px", lineHeight: "1.5" },
-  badge: {
-    display: "inline-block", background: "#EFF3ED", color: GREEN, borderRadius: "999px",
-    padding: "4px 11px", fontSize: "11.5px", fontWeight: "600", marginRight: "6px", marginBottom: "6px",
-    fontFamily: SANS
-  },
-  sectionHead: {
-    fontFamily: MONO, fontSize: "11px", fontWeight: "700", textTransform: "uppercase",
-    letterSpacing: "1px", color: GREEN, marginBottom: "10px", marginTop: "22px",
-    paddingBottom: "8px", borderBottom: "1px solid " + LINE
-  },
+  badge: { display: "inline-block", background: "#EFF3ED", color: GREEN, borderRadius: "999px", padding: "4px 11px", fontSize: "11.5px", fontWeight: "600", marginRight: "6px", marginBottom: "6px", fontFamily: SANS },
+  sectionHead: { fontFamily: MONO, fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "1px", color: GREEN, marginBottom: "10px", marginTop: "22px", paddingBottom: "8px", borderBottom: "1px solid " + LINE },
   servingsRow: { display: "flex", alignItems: "center", gap: "12px", marginBottom: "6px" },
-  servingsBtn: {
-    width: "32px", height: "32px", borderRadius: "50%", border: "1.5px solid " + GREEN,
-    background: "white", color: GREEN, fontSize: "17px", fontWeight: "700", cursor: "pointer",
-    display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1, fontFamily: SANS
-  },
+  servingsBtn: { width: "32px", height: "32px", borderRadius: "50%", border: "1.5px solid " + GREEN, background: "white", color: GREEN, fontSize: "17px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1, fontFamily: SANS },
   servingsNum: { fontFamily: SERIF, fontSize: "17px", fontWeight: "700", color: INK, minWidth: "24px", textAlign: "center" },
-  ingredientRow: {
-    display: "flex", justifyContent: "space-between", alignItems: "baseline",
-    padding: "9px 0", borderBottom: "1px dashed " + LINE, fontSize: "14px", fontFamily: SANS
-  },
+  ingredientRow: { display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "9px 0", borderBottom: "1px dashed " + LINE, fontSize: "14px", fontFamily: SANS },
   ingredientAmount: { color: ORANGE_DARK, fontWeight: "700", fontFamily: MONO, fontSize: "13px", whiteSpace: "nowrap", marginLeft: "12px" },
   stepRow: { display: "flex", gap: "13px", marginBottom: "15px", alignItems: "flex-start" },
-  stepNum: {
-    minWidth: "26px", height: "26px", borderRadius: "50%", background: GREEN, color: "white",
-    fontWeight: "700", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center",
-    marginTop: "1px", fontFamily: SANS, flexShrink: 0
-  },
+  stepNum: { minWidth: "26px", height: "26px", borderRadius: "50%", background: GREEN, color: "white", fontWeight: "700", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "1px", fontFamily: SANS, flexShrink: 0 },
   stepText: { fontSize: "14.5px", lineHeight: "1.65", color: INK, fontFamily: SANS },
-  tipBox: {
-    background: "#FBF1E0", border: "1px solid " + GOLD + "55", borderRadius: "10px",
-    padding: "13px 15px", fontSize: "13.5px", color: "#6E4F12", lineHeight: "1.6",
-    marginTop: "18px", fontFamily: SANS
-  },
+  tipBox: { background: "#FBF1E0", border: "1px solid " + GOLD + "55", borderRadius: "10px", padding: "13px 15px", fontSize: "13.5px", color: "#6E4F12", lineHeight: "1.6", marginTop: "18px", fontFamily: SANS },
   variationsText: { fontSize: "14px", color: INK, lineHeight: "1.65", fontFamily: SANS },
-  premiumCard: {
-    background: GREEN_DARK, borderRadius: "16px", padding: "22px", maxWidth: "600px",
-    margin: "0 auto 28px", border: "1px solid " + GREEN
-  },
-  premiumEyebrow: {
-    fontFamily: MONO, fontSize: "11px", fontWeight: "700", color: GOLD,
-    textTransform: "uppercase", letterSpacing: "1px", marginBottom: "10px", display: "block"
-  },
+  premiumCard: { background: GREEN_DARK, borderRadius: "16px", padding: "22px", maxWidth: "600px", margin: "0 auto 28px", border: "1px solid " + GREEN },
+  premiumEyebrow: { fontFamily: MONO, fontSize: "11px", fontWeight: "700", color: GOLD, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "10px", display: "block" },
   premiumTitle: { fontFamily: SERIF, fontSize: "18px", fontWeight: "700", color: "#fff", marginBottom: "8px" },
   premiumText: { fontFamily: SANS, fontSize: "13.5px", color: "#D8E3DC", lineHeight: "1.6", marginBottom: "16px" },
-  premiumBtn: {
-    background: ORANGE, color: "#fff", border: "none", borderRadius: "9px",
-    padding: "12px 18px", fontSize: "14px", fontWeight: "700", cursor: "pointer",
-    fontFamily: SANS, display: "inline-flex", alignItems: "center", gap: "8px"
-  },
+  premiumBtn: { background: ORANGE, color: "#fff", border: "none", borderRadius: "9px", padding: "12px 18px", fontSize: "14px", fontWeight: "700", cursor: "pointer", fontFamily: SANS, display: "inline-flex", alignItems: "center", gap: "8px" },
   footer: { textAlign: "center", padding: "18px 20px 36px", fontSize: "12px", color: "#A89D88", fontFamily: SANS }
 };
 
@@ -226,19 +115,7 @@ function Spinner({ text }) {
   );
 }
 
-function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSaved }) {
-  const [localSaved, setLocalSaved] = useState(initialSaved || false);
-  const scale = servings / (data.baseServings || 2);
-
-  const handleSave = async () => {
-    if (localSaved) return;
-    await onSave();
-    setLocalSaved(true);
-  };
-
-  const isSaved = localSaved;
-
-  function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSaved, isPremium }) {
+function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSaved, isPremium }) {
   const [localSaved, setLocalSaved] = useState(initialSaved || false);
   const [useImperial, setUseImperial] = useState(false);
   const scale = servings / (data.baseServings || 2);
@@ -307,20 +184,8 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
           e("div", { style: styles.recipeTagline }, data.tagline)
         ),
         e("button", {
-          onClick: handleSave,
-          disabled: isSaved,
-          style: {
-            background: isSaved ? "#EFF3ED" : "transparent",
-            border: "1.5px solid " + (isSaved ? "#1F4D3A" : "#E8DFCB"),
-            borderRadius: "8px",
-            padding: "8px 10px",
-            fontSize: "13px",
-            fontWeight: "600",
-            color: isSaved ? "#1F4D3A" : "#6B6358",
-            cursor: isSaved ? "default" : "pointer",
-            whiteSpace: "nowrap",
-            fontFamily: "'Inter', sans-serif"
-          }
+          onClick: handleSave, disabled: isSaved,
+          style: { background: isSaved ? "#EFF3ED" : "transparent", border: "1.5px solid " + (isSaved ? "#1F4D3A" : "#E8DFCB"), borderRadius: "8px", padding: "8px 10px", fontSize: "13px", fontWeight: "600", color: isSaved ? "#1F4D3A" : "#6B6358", cursor: isSaved ? "default" : "pointer", whiteSpace: "nowrap", fontFamily: "'Inter', sans-serif" }
         }, isSaved ? "\u2713 Saved" : "\uD83D\uDCBE Save")
       ),
       e("div", { style: { marginBottom: "4px" } },
@@ -330,13 +195,7 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
         e("div", { style: styles.sectionHead }, "Servings"),
         isPremium ? e("button", {
           onClick: () => setUseImperial(!useImperial),
-          style: {
-            background: useImperial ? GREEN : "transparent",
-            border: "1.5px solid " + (useImperial ? GREEN : LINE),
-            borderRadius: "999px", padding: "4px 12px", fontSize: "11.5px",
-            fontWeight: "600", cursor: "pointer", color: useImperial ? "#fff" : INK_MUTED,
-            fontFamily: SANS
-          }
+          style: { background: useImperial ? GREEN : "transparent", border: "1.5px solid " + (useImperial ? GREEN : LINE), borderRadius: "999px", padding: "4px 12px", fontSize: "11.5px", fontWeight: "600", cursor: "pointer", color: useImperial ? "#fff" : INK_MUTED, fontFamily: SANS }
         }, useImperial ? "Imperial" : "Metric") : null
       ),
       e("div", { style: styles.servingsRow },
@@ -372,18 +231,11 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
 function SavedRecipesList({ recipes, loading, onSelect, onDelete, onBack }) {
   const backBtn = e("button", {
     onClick: onBack,
-    style: {
-      background: "transparent", border: "none", color: "#1F4D3A", fontWeight: "600",
-      fontSize: "13.5px", cursor: "pointer", padding: "0 0 14px 0", fontFamily: "'Inter', sans-serif",
-      display: "flex", alignItems: "center", gap: "4px"
-    }
+    style: { background: "transparent", border: "none", color: "#1F4D3A", fontWeight: "600", fontSize: "13.5px", cursor: "pointer", padding: "0 0 14px 0", fontFamily: "'Inter', sans-serif", display: "flex", alignItems: "center", gap: "4px" }
   }, "\u2190 Back");
 
   if (loading) {
-    return e("div", { style: { ...styles.card, textAlign: "center", color: "#6B6358", fontFamily: "'Inter', sans-serif", fontSize: "14px" } },
-      backBtn,
-      "Loading your saved recipes\u2026"
-    );
+    return e("div", { style: { ...styles.card, textAlign: "center", color: "#6B6358", fontFamily: "'Inter', sans-serif", fontSize: "14px" } }, backBtn, "Loading your saved recipes\u2026");
   }
   if (!recipes || recipes.length === 0) {
     return e("div", { style: { ...styles.card, textAlign: "center" } },
@@ -396,21 +248,12 @@ function SavedRecipesList({ recipes, loading, onSelect, onDelete, onBack }) {
     backBtn,
     e("div", { style: { fontFamily: "'Fraunces', serif", fontSize: "18px", fontWeight: "700", color: "#1A1A16", marginBottom: "16px" } }, "My Saved Recipes"),
     recipes.map((item) =>
-      e("div", {
-        key: item.id,
-        style: {
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "12px 0", borderBottom: "1px solid #E8DFCB"
-        }
-      },
+      e("div", { key: item.id, style: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #E8DFCB" } },
         e("div", { style: { flex: 1, cursor: "pointer" }, onClick: () => onSelect(item) },
           e("div", { style: { fontFamily: "'Inter', sans-serif", fontWeight: "600", fontSize: "14.5px", color: "#1A1A16" } }, item.recipe_data.title),
           e("div", { style: { fontFamily: "'Inter', sans-serif", fontSize: "12px", color: "#A89D88", marginTop: "2px" } }, new Date(item.saved_at).toLocaleDateString())
         ),
-        e("button", {
-          onClick: () => onDelete(item.id),
-          style: { background: "transparent", border: "none", color: "#A4391A", fontSize: "13px", cursor: "pointer", padding: "6px", fontFamily: "'Inter', sans-serif" }
-        }, "Remove")
+        e("button", { onClick: () => onDelete(item.id), style: { background: "transparent", border: "none", color: "#A4391A", fontSize: "13px", cursor: "pointer", padding: "6px", fontFamily: "'Inter', sans-serif" } }, "Remove")
       )
     )
   );
@@ -425,15 +268,12 @@ function PremiumTeaser({ onUpgrade }) {
   );
 }
 
-function Header({ isSignedIn, userName, onSignIn, onSignOut, onViewSaved, viewingSaved }) {
+  function Header({ isSignedIn, userName, onSignIn, onSignOut, onViewSaved, viewingSaved }) {
   return e("div", { style: styles.header },
     e("div"),
     e("img", { src: "/assets/logo.png", alt: "Mimic Recipe", style: styles.logoImg }),
     e("div", { style: { display: "flex", gap: "8px", justifySelf: "end", alignItems: "center" } },
-      isSignedIn ? e("button", {
-        style: { ...styles.headerBtnGhost, background: viewingSaved ? "rgba(255,255,255,0.15)" : "transparent" },
-        onClick: onViewSaved
-      }, "\uD83D\uDCD6 My Recipes") : null,
+      isSignedIn ? e("button", { style: { ...styles.headerBtnGhost, background: viewingSaved ? "rgba(255,255,255,0.15)" : "transparent" }, onClick: onViewSaved }, "\uD83D\uDCD6 My Recipes") : null,
       isSignedIn
         ? e("button", { style: styles.headerBtnGhost, onClick: onSignOut }, "Sign out" + (userName ? " (" + userName + ")" : ""))
         : e("button", { style: styles.headerBtn, onClick: onSignIn }, "Sign in")
@@ -474,31 +314,17 @@ function App() {
 
   const refreshPremiumStatus = async () => {
     try {
-      if (!window.Clerk || !window.Clerk.session) {
-        setIsPremium(false);
-        return;
-      }
+      if (!window.Clerk || !window.Clerk.session) { setIsPremium(false); return; }
       const token = await window.Clerk.session.getToken();
-      const response = await fetch("/api/check-premium", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        }
-      });
+      const response = await fetch("/api/check-premium", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token } });
       const data = await response.json();
       setIsPremium(!!data.isPremium);
-    } catch (err) {
-      setIsPremium(false);
-    }
+    } catch (err) { setIsPremium(false); }
   };
 
   useEffect(() => {
     function init() {
-      if (!window.Clerk) {
-        setTimeout(init, 100);
-        return;
-      }
+      if (!window.Clerk) { setTimeout(init, 100); return; }
       window.Clerk.load().then(() => {
         setClerkReady(true);
         setIsSignedIn(!!window.Clerk.user);
@@ -507,24 +333,15 @@ function App() {
         window.Clerk.addListener(({ user }) => {
           setIsSignedIn(!!user);
           setUserName(user?.firstName || null);
-          if (user) {
-            refreshPremiumStatus();
-          } else {
-            setIsPremium(false);
-          }
+          if (user) { refreshPremiumStatus(); } else { setIsPremium(false); }
         });
       });
     }
     init();
   }, []);
 
-  const handleSignIn = () => {
-    if (window.Clerk) window.Clerk.openSignIn({});
-  };
-
-  const handleSignOut = () => {
-    if (window.Clerk) window.Clerk.signOut();
-  };
+  const handleSignIn = () => { if (window.Clerk) window.Clerk.openSignIn({}); };
+  const handleSignOut = () => { if (window.Clerk) window.Clerk.signOut(); };
 
   const [upgrading, setUpgrading] = useState(false);
   const [justUpgraded, setJustUpgraded] = useState(false);
@@ -534,47 +351,25 @@ function App() {
   const handleSaveRecipe = async () => {
     if (!recipe || isSaved) return;
     try {
-      if (!window.Clerk || !window.Clerk.session) {
-        handleSignIn();
-        return;
-      }
+      if (!window.Clerk || !window.Clerk.session) { handleSignIn(); return; }
       const token = await window.Clerk.session.getToken({ skipCache: true });
       const response = await fetch("/api/saved-recipes", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
         body: JSON.stringify({ recipe })
       });
-      if (response.ok) {
-        setIsSaved(true);
-      }
-    } catch (err) {
-      // Silent failure - saving is a nice-to-have, not critical to the core experience.
-    }
+      if (response.ok) { setIsSaved(true); }
+    } catch (err) {}
   };
 
   const handleManageSubscription = async () => {
     if (!window.Clerk || !window.Clerk.session) return;
     try {
       const token = await window.Clerk.session.getToken();
-      const response = await fetch("/api/create-portal-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        }
-      });
+      const response = await fetch("/api/create-portal-session", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token } });
       const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error || "Something went wrong opening your subscription settings.");
-      }
-    } catch (err) {
-      alert("Something went wrong opening your subscription settings.");
-    }
+      if (data.url) { window.location.href = data.url; } else { alert(data.error || "Something went wrong opening your subscription settings."); }
+    } catch (err) { alert("Something went wrong opening your subscription settings."); }
   };
 
   const [viewingSaved, setViewingSaved] = useState(false);
@@ -586,25 +381,17 @@ function App() {
     setSavedLoading(true);
     try {
       const token = await window.Clerk.session.getToken();
-      const response = await fetch("/api/saved-recipes", {
-        method: "GET",
-        headers: { "Authorization": "Bearer " + token }
-      });
+      const response = await fetch("/api/saved-recipes", { method: "GET", headers: { "Authorization": "Bearer " + token } });
       const data = await response.json();
       setSavedRecipes(data.recipes || []);
-    } catch (err) {
-      setSavedRecipes([]);
-    }
+    } catch (err) { setSavedRecipes([]); }
     setSavedLoading(false);
   };
 
   const handleViewSaved = () => {
     const next = !viewingSaved;
     setViewingSaved(next);
-    if (next) {
-      setRecipe(null);
-      fetchSavedRecipes();
-    }
+    if (next) { setRecipe(null); fetchSavedRecipes(); }
   };
 
   const handleSelectSaved = (item) => {
@@ -618,28 +405,16 @@ function App() {
     if (!window.Clerk || !window.Clerk.session) return;
     try {
       const token = await window.Clerk.session.getToken();
-      await fetch("/api/saved-recipes", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({ id })
-      });
+      await fetch("/api/saved-recipes", { method: "DELETE", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }, body: JSON.stringify({ id }) });
       setSavedRecipes(prev => prev.filter(r => r.id !== id));
-    } catch (err) {
-      // Silent failure
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {
     if (window.location.search.includes("upgraded=true")) {
       setJustUpgraded(true);
       const tryRefresh = (attempt) => {
-        setTimeout(async () => {
-          await refreshPremiumStatus();
-          if (attempt < 5) tryRefresh(attempt + 1);
-        }, 1500);
+        setTimeout(async () => { await refreshPremiumStatus(); if (attempt < 5) tryRefresh(attempt + 1); }, 1500);
       };
       tryRefresh(0);
       window.history.replaceState({}, "", window.location.pathname);
@@ -647,30 +422,14 @@ function App() {
   }, []);
 
   const handleUpgrade = async (plan) => {
-    if (!window.Clerk || !window.Clerk.session) {
-      handleSignIn();
-      return;
-    }
+    if (!window.Clerk || !window.Clerk.session) { handleSignIn(); return; }
     setUpgrading(true);
     try {
       const token = await window.Clerk.session.getToken();
-      const response = await fetch("/api/create-checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({ plan })
-      });
+      const response = await fetch("/api/create-checkout", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }, body: JSON.stringify({ plan }) });
       const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error || "Something went wrong starting checkout. Please try again.");
-      }
-    } catch (err) {
-      alert("Something went wrong starting checkout. Please try again.");
-    }
+      if (data.url) { window.location.href = data.url; } else { alert(data.error || "Something went wrong starting checkout. Please try again."); }
+    } catch (err) { alert("Something went wrong starting checkout. Please try again."); }
     setUpgrading(false);
   };
 
@@ -678,91 +437,41 @@ function App() {
     if (!file || !file.type.startsWith("image/")) return;
     setImageFile(file);
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      setImagePreview(ev.target.result);
-      setImageBase64(ev.target.result.split(",")[1]);
-    };
+    reader.onload = (ev) => { setImagePreview(ev.target.result); setImageBase64(ev.target.result.split(",")[1]); };
     reader.readAsDataURL(file);
   };
 
   const generate = async () => {
-    setLoading(true);
-    setError(null);
-    setLimitReached(false);
-    setRecipe(null);
-    setIsSaved(false);
-    setOpenedFromSaved(false);
-    setServings(2);
+    setLoading(true); setError(null); setLimitReached(false); setRecipe(null); setIsSaved(false); setOpenedFromSaved(false); setServings(2);
     try {
       if (!window.Clerk || !window.Clerk.session) {
         setError("Your sign-in session isn't ready yet. Please wait a moment and try again, or sign out and back in.");
-        setLoading(false);
-        return;
+        setLoading(false); return;
       }
-
       const token = await window.Clerk.session.getToken();
-
-      if (!token) {
-        setError("Couldn't verify your sign-in. Please sign out and back in, then try again.");
-        setLoading(false);
-        return;
-      }
-
-      const body = tab === "text"
-        ? { ingredientText }
-        : { imageBase64, imageMediaType: imageFile.type };
-
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify(body)
-      });
-
+      if (!token) { setError("Couldn't verify your sign-in. Please sign out and back in, then try again."); setLoading(false); return; }
+      const body = tab === "text" ? { ingredientText } : { imageBase64, imageMediaType: imageFile.type };
+      const response = await fetch("/api/generate", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }, body: JSON.stringify(body) });
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        if (errData.limitReached) {
-          setLimitReached(true);
-          setError(errData.error);
-        } else {
-          throw new Error(errData.debugRaw ? "DEBUG: " + errData.debugRaw : (errData.error || "Request failed"));
-        }
-        setLoading(false);
-        return;
+        if (errData.limitReached) { setLimitReached(true); setError(errData.error); } else { throw new Error(errData.debugRaw ? "DEBUG: " + errData.debugRaw : (errData.error || "Request failed")); }
+        setLoading(false); return;
       }
-
       const data = await response.json();
-      setRecipe(data);
-      setLoading(false);
-
+      setRecipe(data); setLoading(false);
       try {
-        const imgResponse = await fetch("/api/generate-image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ imagePrompt: data.imagePrompt, title: data.title })
-        });
-        if (imgResponse.ok) {
-          const imgData = await imgResponse.json();
-          if (imgData.imageUrl) {
-            setRecipe(prev => prev ? { ...prev, imageUrl: imgData.imageUrl } : prev);
-          }
-        }
-      } catch (imgErr) {
-        // Silent - the recipe still works perfectly without a photo.
-      }
+        const imgResponse = await fetch("/api/generate-image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imagePrompt: data.imagePrompt, title: data.title }) });
+        if (imgResponse.ok) { const imgData = await imgResponse.json(); if (imgData.imageUrl) { setRecipe(prev => prev ? { ...prev, imageUrl: imgData.imageUrl } : prev); } }
+      } catch (imgErr) {}
       return;
-    } catch (err) {
-      setError(err.message || "Something went wrong decoding that recipe. Check your ingredients and try again.");
-    }
+    } catch (err) { setError(err.message || "Something went wrong decoding that recipe. Check your ingredients and try again."); }
     setLoading(false);
   };
 
   const canGenerate = (tab === "text" ? ingredientText.trim().length > 10 : !!imageBase64) && isSignedIn;
 
   return e("div", { style: styles.page },
-    e(Header, { isSignedIn, userName, onSignIn: handleSignIn, onSignOut: handleSignOut, onViewSaved: handleViewSaved, viewingSaved: viewingSaved }),
+    e(Header, { isSignedIn, userName, onSignIn: handleSignIn, onSignOut: handleSignOut, onViewSaved: handleViewSaved, viewingSaved }),
     e(Hero),
     e("div", { style: { padding: "0 16px" } },
 
@@ -772,13 +481,7 @@ function App() {
         e("button", { style: styles.signInBtn, onClick: handleSignIn }, "Sign in or create account")
       ) : null,
 
-      isSignedIn && viewingSaved ? e(SavedRecipesList, {
-        recipes: savedRecipes,
-        loading: savedLoading,
-        onSelect: handleSelectSaved,
-        onDelete: handleDeleteSaved,
-        onBack: () => setViewingSaved(false)
-      }) : null,
+      isSignedIn && viewingSaved ? e(SavedRecipesList, { recipes: savedRecipes, loading: savedLoading, onSelect: handleSelectSaved, onDelete: handleDeleteSaved, onBack: () => setViewingSaved(false) }) : null,
 
       isSignedIn && !viewingSaved ? e("div", { style: styles.card },
         justUpgraded ? e("div", { style: { background: "#EFF7EE", border: "1px solid #B8DBC0", borderRadius: "9px", padding: "12px 14px", marginBottom: "16px", fontSize: "13.5px", color: "#1F4D3A", fontFamily: SANS, textAlign: "center" } }, "\uD83C\uDF89 Payment received \u2014 activating your Premium access now\u2026") : null,
@@ -792,29 +495,15 @@ function App() {
 
         tab === "text" ? e(React.Fragment, null,
           e("span", { style: styles.eyebrow }, "Ingredients list"),
-          e("textarea", {
-            style: styles.textarea,
-            placeholder: "e.g. Water, Mango (32%), Pineapple juice, Banana pur\u00e9e, Passion fruit (4%), Lemon juice, Natural flavourings\u2026",
-            value: ingredientText,
-            onChange: ev => setIngredientText(ev.target.value)
-          })
+          e("textarea", { style: styles.textarea, placeholder: "e.g. Water, Mango (32%), Pineapple juice, Banana pur\u00e9e, Passion fruit (4%), Lemon juice, Natural flavourings\u2026", value: ingredientText, onChange: ev => setIngredientText(ev.target.value) })
         ) : null,
 
         tab === "photo" ? e(React.Fragment, null,
           e("span", { style: styles.eyebrow }, "Product label photo"),
           imagePreview ? e(React.Fragment, null,
             e("img", { src: imagePreview, alt: "Label preview", style: styles.previewImg }),
-            e("button", {
-              style: styles.btnSecondary,
-              onClick: () => { setImageFile(null); setImagePreview(null); setImageBase64(null); }
-            }, "Remove photo")
-          ) : e("div", {
-            style: styles.uploadArea(dragging),
-            onClick: () => fileRef.current.click(),
-            onDragOver: ev => { ev.preventDefault(); setDragging(true); },
-            onDragLeave: () => setDragging(false),
-            onDrop: ev => { ev.preventDefault(); setDragging(false); handleImage(ev.dataTransfer.files[0]); }
-          },
+            e("button", { style: styles.btnSecondary, onClick: () => { setImageFile(null); setImagePreview(null); setImageBase64(null); } }, "Remove photo")
+          ) : e("div", { style: styles.uploadArea(dragging), onClick: () => fileRef.current.click(), onDragOver: ev => { ev.preventDefault(); setDragging(true); }, onDragLeave: () => setDragging(false), onDrop: ev => { ev.preventDefault(); setDragging(false); handleImage(ev.dataTransfer.files[0]); } },
             e("div", { style: styles.uploadIcon }, "\uD83D\uDCF8"),
             e("div", { style: styles.uploadText }, "Tap to upload or drag a photo here"),
             e("div", { style: { fontSize: "13px", color: "#AABCAA" } }, "JPG, PNG, WEBP supported"),
@@ -825,26 +514,23 @@ function App() {
         e("button", { style: styles.generateBtn(!canGenerate), disabled: !canGenerate, onClick: generate }, "Generate My Recipe \u2192"),
 
         limitReached ? e("div", { style: styles.limitBox },
-          "\uD83D\uDD12 " + error,
-          e("br"),
+          "\uD83D\uDD12 " + error, e("br"),
           e("button", { style: styles.limitBtn, onClick: () => handleUpgrade("monthly") }, "Upgrade to Premium")
         ) : (error ? e("div", { style: styles.errorBox }, "\u26A0\uFE0F " + error) : null)
 
       ) : null,
 
       loading ? e("div", { style: { maxWidth: "600px", margin: "0 auto 24px", background: CARD, borderRadius: "16px", border: "1px solid " + LINE } }, e(Spinner)) : null,
+
       (recipe && !loading) ? e(React.Fragment, null,
         openedFromSaved ? e("button", {
           onClick: () => { setRecipe(null); setOpenedFromSaved(false); },
-          style: {
-            background: "transparent", border: "none", color: "#1F4D3A", fontWeight: "600",
-            fontSize: "13.5px", cursor: "pointer", padding: "0 0 10px 0", fontFamily: "'Inter', sans-serif",
-            display: "block"
-          }
+          style: { background: "transparent", border: "none", color: "#1F4D3A", fontWeight: "600", fontSize: "13.5px", cursor: "pointer", padding: "0 0 10px 0", fontFamily: "'Inter', sans-serif", display: "block" }
         }, "\u2190 Back to Mimic Recipe") : null,
-        e(RecipeResult, { data: recipe, servings: servings, setServings: setServings, onSave: handleSaveRecipe, isSaved: isSaved, isPremium: isPremium }),
+        e(RecipeResult, { data: recipe, servings, setServings, onSave: handleSaveRecipe, isSaved, isPremium }),
         !isPremium ? e(PremiumTeaser, { onUpgrade: handleUpgrade }) : null
       ) : null,
+
       e("div", { style: styles.footer }, "Powered by Claude AI \u00B7 A Glova Studio concept")
     )
   );
