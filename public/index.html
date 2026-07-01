@@ -489,8 +489,8 @@ function App() {
         setIsSaved(true);
       }
     } catch (err) {
-      // Silent failure - saving is a nice-to-have, not critical to the core experience.
-    }
+      console.error("Save failed:", err);
+  }
   };
 
   const handleManageSubscription = async () => {
