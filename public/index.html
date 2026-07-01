@@ -701,6 +701,12 @@ function App() {
     e(Hero),
     e("div", { style: { padding: "0 16px" } },
 
+      !isSignedIn && clerkReady ? e("div", { style: styles.signInPrompt },
+        e("div", { style: styles.signInTitle }, "Sign in to get started"),
+        e("p", { style: styles.signInText }, "Create a free account to get 3 recipe decodes every month, no card required \u2014 or go Premium for unlimited decodes plus My Pantry."),
+        e("button", { style: styles.signInBtn, onClick: handleSignIn }, "Sign in or create account")
+      ) : null,
+
       isSignedIn && viewingSaved ? e(SavedRecipesList, {
         recipes: savedRecipes,
         loading: savedLoading,
