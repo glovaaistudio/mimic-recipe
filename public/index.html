@@ -376,8 +376,8 @@ function App() {
       if (!window.Clerk || !window.Clerk.session) { handleSignIn(); return; }
       const token = await window.Clerk.session.getToken({ skipCache: true });
       const body = tab === "text"
-        ? { ingredientText, regenerate: true }
-        : { imageBase64, imageMediaType: imageFile ? imageFile.type : "image/jpeg", regenerate: true };
+        ? { ingredientText, regenerate: true, language }
+        : { imageBase64, imageMediaType: imageFile ? imageFile.type : "image/jpeg", regenerate: true, language };
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
