@@ -347,6 +347,7 @@ function App() {
   const [justUpgraded, setJustUpgraded] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [openedFromSaved, setOpenedFromSaved] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
 
   const handleSaveRecipe = async () => {
     if (!recipe || isSaved) return;
