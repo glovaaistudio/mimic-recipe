@@ -326,7 +326,19 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
       e("div", { style: { marginBottom: "4px" } },
         (data.tags || []).map((t, i) => e("span", { key: i, style: styles.badge }, t))
       ),
-      e("div", { style: styles.sectionHead }, "Servings"),
+      e("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } },
+        e("div", { style: styles.sectionHead }, "Servings"),
+        isPremium ? e("button", {
+          onClick: () => setUseImperial(!useImperial),
+          style: {
+            background: useImperial ? GREEN : "transparent",
+            border: "1.5px solid " + (useImperial ? GREEN : LINE),
+            borderRadius: "999px", padding: "4px 12px", fontSize: "11.5px",
+            fontWeight: "600", cursor: "pointer", color: useImperial ? "#fff" : INK_MUTED,
+            fontFamily: SANS
+          }
+        }, useImperial ? "Imperial" : "Metric") : null
+      ),
       e("div", { style: styles.servingsRow },
         e("button", { style: styles.servingsBtn, onClick: () => setServings(Math.max(1, servings - 1)) }, "\u2212"),
         e("span", { style: styles.servingsNum }, servings),
