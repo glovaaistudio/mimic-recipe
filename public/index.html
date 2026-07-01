@@ -238,6 +238,38 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
 
   const isSaved = localSaved;
 
+  function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSaved, isPremium }) {
+  const [localSaved, setLocalSaved] = useState(initialSaved || false);
+  const [useImperial, setUseImperial] = useState(false);
+  const scale = servings / (data.baseServings || 2);
+
+  const handleSave = async () => {
+    if (localSaved) return;
+    await onSave();
+    setLocalSaved(true);
+  };
+
+  const isSaved = localSaved;
+
+  const toImperial = (amount, unit) => {
+    const num = parseFloat(amount);
+    if (isNaN(num)) return { amount, unit };
+    switch (unit) {
+      case "g":
+        if (num < 30) return { amount: Math.round(num * 0.035274 * 8) / 8, unit: "oz" };
+        return { amount: Math.round(num * 0.035274 * 4) / 4, unit: "oz" };
+      case "kg":
+        return { amount: Math.round(num * 2.20462 * 4) / 4, unit: "lb" };
+      case "ml":
+        if (num <= 30) return { amount: Math.round(num * 0.033814 * 8) / 8, unit: "fl oz" };
+        return { amount: Math.round(num * 0.033814 * 4) / 4, unit: "fl oz" };
+      case "l":
+        return { amount: Math.round(num * 2.11338 * 4) / 4, unit: "cups" };
+      default:
+        return { amount, unit };
+    }
+  };
+
   const scaleAmount = (amount) => {
     const num = parseFloat(amount);
     if (isNaN(num)) return amount;
@@ -248,6 +280,15 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
     }
     const rounded = Math.round(scaled * 2) / 2;
     return rounded % 1 === 0 ? rounded : rounded;
+  };
+
+  const displayIngredient = (ing) => {
+    const scaledAmount = scaleAmount(ing.amount);
+    if (useImperial && isPremium) {
+      const converted = toImperial(scaledAmount, ing.unit);
+      return { amount: converted.amount, unit: converted.unit };
+    }
+    return { amount: scaledAmount, unit: ing.unit };
   };
 
   return e("div", { style: styles.resultCard },
