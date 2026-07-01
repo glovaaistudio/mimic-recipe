@@ -471,6 +471,7 @@ function App() {
   const [openedFromSaved, setOpenedFromSaved] = useState(false);
 
   const handleSaveRecipe = async () => {
+  const handleSaveRecipe = async () => {
     if (!recipe || isSaved) return;
     try {
       if (!window.Clerk || !window.Clerk.session) {
@@ -478,6 +479,7 @@ function App() {
         return;
       }
       const token = await window.Clerk.session.getToken({ skipCache: true });
+      const response = await fetch("/api/saved-recipes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -489,8 +491,8 @@ function App() {
         setIsSaved(true);
       }
     } catch (err) {
-      console.error("Save failed:", err);
-  }
+      // Silent failure - saving is a nice-to-have, not critical to the core experience.
+    }
   };
 
   const handleManageSubscription = async () => {
