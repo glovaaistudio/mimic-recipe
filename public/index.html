@@ -386,7 +386,7 @@ function App() {
         setRegenerating(false); return;
       }
       const data = await response.json();
-      setRecipe(data);
+      setRecipe({ ...data, imageUrl: null });
       setRegenerating(false);
       try {
         const imgResponse = await fetch("/api/generate-image", {
