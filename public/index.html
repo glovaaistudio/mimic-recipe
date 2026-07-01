@@ -228,11 +228,17 @@ function Spinner({ text }) {
 
 function RecipeResult({ data, servings, setServings, onSave, isSaved }) {
   const scale = servings / (data.baseServings || 2);
+
   const scaleAmount = (amount) => {
     const num = parseFloat(amount);
     if (isNaN(num)) return amount;
     const scaled = num * scale;
-    return scaled % 1 === 0 ? scaled : scaled.toFixed(1);
+    if (scaled < 1) {
+      const rounded = Math.round(scaled * 4) / 4;
+      return rounded === Math.floor(rounded) ? rounded : rounded.toFixed(2).replace(/\.?0+$/, "");
+    }
+    const rounded = Math.round(scaled * 2) / 2;
+    return rounded % 1 === 0 ? rounded : rounded;
   };
 
   return e("div", { style: styles.resultCard },
