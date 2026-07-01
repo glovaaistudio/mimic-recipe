@@ -620,6 +620,7 @@ function App() {
     setLimitReached(false);
     setRecipe(null);
     setIsSaved(false);
+    setOpenedFromSaved(false);
     setServings(2);
     try {
       if (!window.Clerk || !window.Clerk.session) {
