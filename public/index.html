@@ -226,8 +226,17 @@ function Spinner({ text }) {
   );
 }
 
-function RecipeResult({ data, servings, setServings, onSave, isSaved }) {
+function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSaved }) {
+  const [localSaved, setLocalSaved] = useState(initialSaved || false);
   const scale = servings / (data.baseServings || 2);
+
+  const handleSave = async () => {
+    if (localSaved) return;
+    await onSave();
+    setLocalSaved(true);
+  };
+
+  const isSaved = localSaved;
 
   const scaleAmount = (amount) => {
     const num = parseFloat(amount);
