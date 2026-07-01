@@ -77,7 +77,7 @@ export default async function handler(req, res) {
     imageBase64
       ? "The user has uploaded a photo of a food product label or ingredients list. Read the ingredients from the image and generate a recipe to recreate it at home."
       : `A user has given you the ingredients list from a food product they love and want to recreate at home.\n\nIngredients provided: ${ingredientText}\n\nGenerate a recipe to recreate this at home.`
-  }${regenerateInstruction}
+  }${regenerateInstruction}${languageInstruction}
 
 IMPORTANT - this is a HOME recipe for a real person cooking in their kitchen, not a manufacturing specification:
 - Scale the recipe to a sensible, realistic home serving size (e.g. a proper cake for 8 people, a normal batch of sauce, a regular-sized smoothie) - do NOT just copy tiny per-unit amounts from a nutrition label.
