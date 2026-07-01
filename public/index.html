@@ -558,6 +558,14 @@ function App() {
           )
         ) : null,
 
+        isPremium ? e("div", { style: { marginTop: "16px" } },
+          e("label", { style: { fontSize: "12px", fontWeight: "600", color: INK_MUTED, textTransform: "uppercase", letterSpacing: "0.5px", fontFamily: SANS, display: "block", marginBottom: "6px" } }, "\uD83C\uDF0D Recipe language"),
+          e("select", {
+            value: language,
+            onChange: ev => setLanguage(ev.target.value),
+            style: { width: "100%", padding: "10px 12px", border: "1.5px solid " + LINE, borderRadius: "9px", fontSize: "14px", fontFamily: SANS, color: INK, background: CREAM, outline: "none", cursor: "pointer" }
+          }, LANGUAGES.map(lang => e("option", { key: lang, value: lang }, lang)))
+        ) : null,
         e("button", { style: styles.generateBtn(!canGenerate), disabled: !canGenerate, onClick: generate }, "Generate My Recipe \u2192"),
 
         limitReached ? e("div", { style: styles.limitBox },
