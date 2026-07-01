@@ -348,6 +348,9 @@ function App() {
   const [isSaved, setIsSaved] = useState(false);
   const [openedFromSaved, setOpenedFromSaved] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
+  const [language, setLanguage] = useState("English");
+
+  const LANGUAGES = ["English", "Spanish", "French", "German", "Italian", "Portuguese", "Dutch", "Japanese", "Chinese (Simplified)", "Arabic"];
 
   const handleSaveRecipe = async () => {
     if (!recipe || isSaved) return;
