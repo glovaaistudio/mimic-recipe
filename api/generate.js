@@ -61,9 +61,15 @@ export default async function handler(req, res) {
     }
   }
 
-  const { ingredientText, imageBase64, imageMediaType, regenerate } = req.body;
+  const { ingredientText, imageBase64, imageMediaType, regenerate, language } = req.body;
 
   const regenerateInstruction = regenerate
+    ? "\n\nIMPORTANT: The user has already seen one recipe for these ingredients and wants a DIFFERENT version. Take a distinctly different approach — different cuisine style, different cooking technique, different form factor (e.g. if you made a smoothie, make a sorbet; if you made a cake, make muffins; if you made a pasta sauce, make a soup). Do NOT simply vary the spices or swap one ingredient — the overall dish concept must be genuinely different."
+    : "";
+
+  const languageInstruction = language && language !== "English"
+    ? `\n\nIMPORTANT: Write the ENTIRE recipe response in ${language} — this includes the title, tagline, tags, ingredient names, step instructions, tip, and variations. Every field in the JSON must be in ${language}. Do not mix languages.`
+    : "";
     ? "\n\nIMPORTANT: The user has already seen one recipe for these ingredients and wants a DIFFERENT version. Take a distinctly different approach — different cuisine style, different cooking technique, different form factor (e.g. if you made a smoothie, make a sorbet; if you made a cake, make muffins; if you made a pasta sauce, make a soup). Do NOT simply vary the spices or swap one ingredient — the overall dish concept must be genuinely different."
     : "";
 
