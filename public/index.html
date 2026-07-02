@@ -553,15 +553,12 @@ function App() {
     if (!window.Clerk || !window.Clerk.session) return;
     try {
       const token = await window.Clerk.session.getToken();
-      const response = await fetch("/api/pantry", {
+      await fetch("/api/pantry", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
         body: JSON.stringify({ item_name })
       });
-      const data = await response.json();
-      if (data.success && data.item) {
-        setPantryItems(prev => [...prev, data.item].sort((a, b) => a.item_name.localeCompare(b.item_name)));
-      }
+      await fetchPantry();
     } catch (err) {}
   };
 
