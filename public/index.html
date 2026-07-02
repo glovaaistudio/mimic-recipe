@@ -469,7 +469,13 @@ function App() {
     }
   }, []);
 
+  const handleShowPremium = () => {
+    if (!isSignedIn) { handleSignIn(); return; }
+    setShowPremiumModal(true);
+  };
+
   const handleUpgrade = async (plan) => {
+    setShowPremiumModal(false);
     if (!window.Clerk || !window.Clerk.session) { handleSignIn(); return; }
     setUpgrading(true);
     try {
