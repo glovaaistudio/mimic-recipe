@@ -687,9 +687,10 @@ function App() {
         e("button", { style: styles.signInBtn, onClick: handleSignIn }, "Sign in or create account")
       ) : null,
 
+      isSignedIn && viewingPantry ? e(PantryView, { items: pantryItems, loading: pantryLoading, onAdd: handleAddPantryItem, onDelete: handleDeletePantryItem, onBack: () => setViewingPantry(false) }) : null,
       isSignedIn && viewingSaved ? e(SavedRecipesList, { recipes: savedRecipes, loading: savedLoading, onSelect: handleSelectSaved, onDelete: handleDeleteSaved, onBack: () => setViewingSaved(false) }) : null,
 
-      isSignedIn && !viewingSaved ? e("div", { style: styles.card },
+      isSignedIn && !viewingSaved && !viewingPantry ? e("div", { style: styles.card },
         justUpgraded ? e("div", { style: { background: "#EFF7EE", border: "1px solid #B8DBC0", borderRadius: "9px", padding: "12px 14px", marginBottom: "16px", fontSize: "13.5px", color: "#1F4D3A", fontFamily: SANS, textAlign: "center" } }, "\uD83C\uDF89 Payment received \u2014 activating your Premium access now\u2026") : null,
         isPremium
           ? e("div", { style: { ...styles.usageNote, color: GOLD, fontWeight: "700" } }, "\u2B50 You're on Premium \u2014 unlimited decodes unlocked \u00B7 ", e("a", { href: "#", onClick: (ev) => { ev.preventDefault(); handleManageSubscription(); }, style: { color: INK_MUTED, fontWeight: "600", textDecoration: "underline", fontSize: "12px" } }, "Manage subscription"))
