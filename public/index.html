@@ -525,6 +525,54 @@ function App() {
   };
 
   const [viewingSaved, setViewingSaved] = useState(false);
+
+  const [viewingPantry, setViewingPantry] = useState(false);
+  const [pantryItems, setPantryItems] = useState([]);
+  const [pantryLoading, setPantryLoading] = useState(false);
+
+  const fetchPantry = async () => {
+    if (!window.Clerk || !window.Clerk.session) return;
+    setPantryLoading(true);
+    try {
+      const token = await window.Clerk.session.getToken();
+      const response = await fetch("/api/pantry", { method: "GET", headers: { "Authorization": "Bearer " + token } });
+      const data = await response.json();
+      setPantryItems(data.items || []);
+    } catch (err) { setPantryItems([]); }
+    setPantryLoading(false);
+  };
+
+  const handleViewPantry = () => {
+    const next = !viewingPantry;
+    setViewingPantry(next);
+    setViewingSaved(false);
+    if (next) fetchPantry();
+  };
+
+  const handleAddPantryItem = async (item_name) => {
+    if (!window.Clerk || !window.Clerk.session) return;
+    try {
+      const token = await window.Clerk.session.getToken();
+      const response = await fetch("/api/pantry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ item_name })
+      });
+      const data = await response.json();
+      if (data.success && data.item) {
+        setPantryItems(prev => [...prev, data.item].sort((a, b) => a.item_name.localeCompare(b.item_name)));
+      }
+    } catch (err) {}
+  };
+
+  const handleDeletePantryItem = async (id) => {
+    if (!window.Clerk || !window.Clerk.session) return;
+    try {
+      const token = await window.Clerk.session.getToken();
+      await fetch("/api/pantry", { method: "DELETE", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }, body: JSON.stringify({ id }) });
+      setPantryItems(prev => prev.filter(item => item.id !== id));
+    } catch (err) {}
+  };
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [savedLoading, setSavedLoading] = useState(false);
 
