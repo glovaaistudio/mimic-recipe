@@ -38,6 +38,14 @@ export default async function handler(req, res) {
       );
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS pantry_items (
+        id SERIAL PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        item_name TEXT NOT NULL,
+        added_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
+    `;
     return res.status(200).json({ success: true, message: "Database tables created successfully." });
   } catch (err) {
     console.error("Database setup error:", err);
