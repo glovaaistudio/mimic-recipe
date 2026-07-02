@@ -601,10 +601,12 @@ function App() {
             }
           }, regenerating ? "Getting a different recipe idea\u2026" : "\uD83D\uDD04 Get a Different Recipe Idea")
         ),
-        !isPremium ? e(PremiumTeaser, { onUpgrade: handleUpgrade }) : null
+        !isPremium ? e(PremiumTeaser, { onUpgrade: handleShowPremium }) : null
       ) : null,
 
-      e("div", { style: styles.footer }, "Powered by Claude AI \u00B7 A Glova Studio concept")
+      e("div", { style: styles.footer }, "Powered by Claude AI \u00B7 A Glova Studio concept"),
+
+      showPremiumModal ? e(PremiumModal, { onClose: () => setShowPremiumModal(false), onUpgrade: handleUpgrade }) : null
     )
   );
 }
