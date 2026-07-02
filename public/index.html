@@ -227,7 +227,57 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
     )
   );
 }
+function PantryView({ items, loading, onAdd, onDelete, onBack }) {
+  const [newItem, setNewItem] = useState("");
 
+  const handleAdd = () => {
+    if (!newItem.trim()) return;
+    onAdd(newItem.trim());
+    setNewItem("");
+  };
+
+  const handleKeyDown = (ev) => {
+    if (ev.key === "Enter") handleAdd();
+  };
+
+  return e("div", { style: styles.card },
+    e("button", {
+      onClick: onBack,
+      style: { background: "transparent", border: "none", color: GREEN, fontWeight: "600", fontSize: "13.5px", cursor: "pointer", padding: "0 0 14px 0", fontFamily: SANS, display: "flex", alignItems: "center", gap: "4px" }
+    }, "\u2190 Back"),
+    e("div", { style: { fontFamily: SERIF, fontSize: "18px", fontWeight: "700", color: INK, marginBottom: "6px" } }, "\uD83E\uDDF9 My Pantry"),
+    e("div", { style: { fontSize: "13px", color: INK_MUTED, fontFamily: SANS, marginBottom: "18px" } }, "Add ingredients you already have at home. Mimic Recipe will flag what's missing when you decode a product."),
+    e("div", { style: { display: "flex", gap: "8px", marginBottom: "20px" } },
+      e("input", {
+        type: "text",
+        placeholder: "e.g. plain flour, eggs, butter\u2026",
+        value: newItem,
+        onChange: ev => setNewItem(ev.target.value),
+        onKeyDown: handleKeyDown,
+        style: { flex: 1, padding: "11px 13px", border: "1.5px solid " + LINE, borderRadius: "9px", fontSize: "14px", fontFamily: SANS, color: INK, background: CREAM, outline: "none" }
+      }),
+      e("button", {
+        onClick: handleAdd,
+        disabled: !newItem.trim(),
+        style: { background: newItem.trim() ? GREEN : "#E3D9C4", color: "#fff", border: "none", borderRadius: "9px", padding: "11px 16px", fontSize: "14px", fontWeight: "700", cursor: newItem.trim() ? "pointer" : "not-allowed", fontFamily: SANS }
+      }, "Add")
+    ),
+    loading ? e("div", { style: { textAlign: "center", color: INK_MUTED, fontFamily: SANS, fontSize: "14px", padding: "20px" } }, "Loading your pantry\u2026") :
+    items.length === 0 ? e("div", { style: { textAlign: "center", color: INK_MUTED, fontFamily: SANS, fontSize: "14px", padding: "20px" } }, "Your pantry is empty \u2014 add some ingredients above!") :
+    e("div", null,
+      e("div", { style: { fontFamily: MONO, fontSize: "11px", fontWeight: "700", color: GREEN, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "10px" } }, items.length + " item" + (items.length !== 1 ? "s" : "") + " in your pantry"),
+      items.map(item =>
+        e("div", { key: item.id, style: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px dashed " + LINE } },
+          e("span", { style: { fontFamily: SANS, fontSize: "14px", color: INK, textTransform: "capitalize" } }, item.item_name),
+          e("button", { onClick: () => onDelete(item.id), style: { background: "transparent", border: "none", color: "#A4391A", fontSize: "13px", cursor: "pointer", padding: "4px 6px", fontFamily: SANS } }, "Remove")
+        )
+      )
+    )
+  );
+}
+
+function SavedRecipesList({ recipes, loading, onSelect, onDelete, onBack }) {
+  
 function SavedRecipesList({ recipes, loading, onSelect, onDelete, onBack }) {
   const backBtn = e("button", {
     onClick: onBack,
