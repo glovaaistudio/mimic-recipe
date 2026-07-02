@@ -259,6 +259,58 @@ function SavedRecipesList({ recipes, loading, onSelect, onDelete, onBack }) {
   );
 }
 
+  function PremiumModal({ onClose, onUpgrade }) {
+  const perks = [
+    ["\u267E\uFE0F", "Unlimited recipe decodes", "No monthly limit \u2014 decode as many as you like"],
+    ["\uD83D\uDCBE", "Save unlimited recipes", "Build your own personal recipe collection"],
+    ["\uD83C\uDF0D", "Recipes in 10 languages", "English, Spanish, French, German, Italian, Portuguese, Dutch, Japanese, Chinese, Arabic"],
+    ["\uD83D\uDCD0", "Imperial & metric measurements", "Switch between units instantly"],
+    ["\uD83D\uDD04", "Alternative recipe ideas", "Not happy with a result? Get a completely different take"],
+    ["\uD83E\uDDF9", "My Pantry \u2014 coming soon", "Check recipes against what you already have at home"]
+  ];
+
+  return e("div", {
+    style: { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", zIndex: 1000, display: "flex", alignItems: "flex-end", justifyContent: "center" },
+    onClick: onClose
+  },
+    e("div", {
+      style: { background: CARD, borderRadius: "20px 20px 0 0", padding: "28px 24px 40px", maxWidth: "600px", width: "100%", maxHeight: "90vh", overflowY: "auto" },
+      onClick: ev => ev.stopPropagation()
+    },
+      e("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" } },
+        e("div", null,
+          e("div", { style: { fontFamily: MONO, fontSize: "11px", fontWeight: "700", color: GOLD, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "6px" } }, "Mimic Recipe Premium"),
+          e("div", { style: { fontFamily: SERIF, fontSize: "22px", fontWeight: "700", color: INK, lineHeight: "1.2" } }, "Everything you need to decode any recipe")
+        ),
+        e("button", { onClick: onClose, style: { background: "transparent", border: "none", fontSize: "22px", cursor: "pointer", color: INK_MUTED, padding: "0 0 0 12px" } }, "\u00D7")
+      ),
+      perks.map(([icon, title, desc], i) =>
+        e("div", { key: i, style: { display: "flex", gap: "14px", marginBottom: "16px", alignItems: "flex-start" } },
+          e("div", { style: { fontSize: "22px", minWidth: "32px" } }, icon),
+          e("div", null,
+            e("div", { style: { fontFamily: SANS, fontWeight: "600", fontSize: "14.5px", color: INK } }, title),
+            e("div", { style: { fontFamily: SANS, fontSize: "13px", color: INK_MUTED, marginTop: "2px" } }, desc)
+          )
+        )
+      ),
+      e("div", { style: { borderTop: "1px solid " + LINE, marginTop: "20px", paddingTop: "20px" } },
+        e("div", { style: { display: "flex", gap: "12px", marginBottom: "12px" } },
+          e("button", {
+            onClick: () => onUpgrade("monthly"),
+            style: { flex: 1, background: ORANGE, color: "#fff", border: "none", borderRadius: "10px", padding: "14px", fontSize: "15px", fontWeight: "700", cursor: "pointer", fontFamily: SANS }
+          }, "\uD83D\uDD13 \u00A33.99 / month"),
+          e("button", {
+            onClick: () => onUpgrade("yearly"),
+            style: { flex: 1, background: GREEN, color: "#fff", border: "none", borderRadius: "10px", padding: "14px", fontSize: "15px", fontWeight: "700", cursor: "pointer", fontFamily: SANS }
+          }, "\u2B50 \u00A329.99 / year")
+        ),
+        e("div", { style: { textAlign: "center", fontSize: "12px", color: INK_MUTED, fontFamily: SANS } }, "Yearly saves you 37% \u00B7 Cancel anytime")
+      )
+    )
+  );
+}
+
+function PremiumTeaser({ onUpgrade }) {
 function PremiumTeaser({ onUpgrade }) {
   return e("div", { style: styles.premiumCard },
     e("span", { style: styles.premiumEyebrow }, "My Pantry \u00B7 Premium"),
