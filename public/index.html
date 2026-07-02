@@ -577,7 +577,7 @@ function App() {
 
         limitReached ? e("div", { style: styles.limitBox },
           "\uD83D\uDD12 " + error, e("br"),
-          e("button", { style: styles.limitBtn, onClick: () => handleUpgrade("monthly") }, "Upgrade to Premium")
+        e("button", { style: styles.limitBtn, onClick: () => handleShowPremium() }, "Upgrade to Premium")
         ) : (error ? e("div", { style: styles.errorBox }, "\u26A0\uFE0F " + error) : null)
 
       ) : null,
