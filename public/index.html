@@ -250,7 +250,7 @@ function PantryView({ items, loading, onAdd, onDelete, onBack }) {
     e("div", { style: { display: "flex", gap: "8px", marginBottom: "20px" } },
       e("input", {
         type: "text",
-        placeholder: "e.g. plain flour, eggs, butter\u2026",
+        placeholder: "e.g. eggs",
         value: newItem,
         onChange: ev => setNewItem(ev.target.value),
         onKeyDown: handleKeyDown,
