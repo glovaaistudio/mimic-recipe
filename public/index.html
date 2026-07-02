@@ -344,6 +344,7 @@ function App() {
   const handleSignOut = () => { if (window.Clerk) window.Clerk.signOut(); };
 
   const [upgrading, setUpgrading] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [justUpgraded, setJustUpgraded] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [openedFromSaved, setOpenedFromSaved] = useState(false);
