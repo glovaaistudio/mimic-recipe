@@ -319,9 +319,14 @@ function PremiumTeaser({ onUpgrade }) {
   );
 }
 
-  function Header({ isSignedIn, userName, onSignIn, onSignOut, onViewSaved, viewingSaved }) {
+  function Header({ isSignedIn, userName, onSignIn, onSignOut, onViewSaved, viewingSaved, onViewPantry, viewingPantry, isPremium }) {
   return e("div", { style: styles.header },
-    e("div"),
+    e("div", { style: { justifySelf: "start" } },
+      isSignedIn && isPremium ? e("button", {
+        style: { ...styles.headerBtnGhost, background: viewingPantry ? "rgba(255,255,255,0.15)" : "transparent" },
+        onClick: onViewPantry
+      }, "\uD83E\uDDF9 My Pantry") : null
+    ),
     e("img", { src: "/assets/logo.png", alt: "Mimic Recipe", style: styles.logoImg }),
     e("div", { style: { display: "flex", gap: "8px", justifySelf: "end", alignItems: "center" } },
       isSignedIn ? e("button", { style: { ...styles.headerBtnGhost, background: viewingSaved ? "rgba(255,255,255,0.15)" : "transparent" }, onClick: onViewSaved }, "\uD83D\uDCD6 My Recipes") : null,
