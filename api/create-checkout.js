@@ -39,8 +39,8 @@ export default async function handler(req, res) {
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `https://mimic-recipe.vercel.app/?upgraded=true`,
-      cancel_url: `https://mimic-recipe.vercel.app/`,
+      success_url: `https://mimicrecipe.com/?upgraded=true`,
+      cancel_url: `https://mimicrecipe.com/`,
       client_reference_id: userId,
       metadata: { clerk_user_id: userId },
       subscription_data: {
