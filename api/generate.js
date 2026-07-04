@@ -60,8 +60,12 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Something went wrong checking your usage. Please try again." });
     }
   }
+const { ingredientText, imageBase64, imageMediaType, regenerate, language, pantryItems } = req.body;
 
-  const { ingredientText, imageBase64, imageMediaType, regenerate, language } = req.body;
+  const pantryInstruction = pantryItems && pantryItems.length > 0
+    ? "\n\nThe user has the following ingredients already in their pantry: " + pantryItems.join(", ") + ". For each ingredient in your recipe, add a \"have\" field set to true if the user likely has it based on their pantry list (use fuzzy matching — e.g. 'butter' matches 'unsalted butter'), or false if they need to buy it."
+    : "";
+  
 
   const regenerateInstruction = regenerate
     ? "\n\nIMPORTANT: The user has already seen one recipe for these ingredients and wants a DIFFERENT version. Take a distinctly different approach — different cuisine style, different cooking technique, different form factor (e.g. if you made a smoothie, make a sorbet; if you made a cake, make muffins; if you made a pasta sauce, make a soup). Do NOT simply vary the spices or swap one ingredient — the overall dish concept must be genuinely different."
