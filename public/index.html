@@ -217,6 +217,12 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
           e("span", { style: styles.ingredientAmount }, amount + " " + unit)
         );
       }),
+      (data.ingredients || []).some(ing => ing.have === false) ? e("div", { style: { background: "#FBF1E0", border: "1px solid #D9A44155", borderRadius: "10px", padding: "12px 14px", marginTop: "8px", marginBottom: "4px" } },
+        e("div", { style: { fontFamily: MONO, fontSize: "11px", fontWeight: "700", color: "#6E4F12", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" } }, "\uD83D\uDED2 You need to buy"),
+        (data.ingredients || []).filter(ing => ing.have === false).map((ing, i) =>
+          e("div", { key: i, style: { fontFamily: SANS, fontSize: "13.5px", color: "#6E4F12", padding: "2px 0" } }, "• " + ing.name)
+        )
+      ) : null,
       e("div", { style: styles.sectionHead }, "Method"),
       (data.steps || []).map((step, i) =>
         e("div", { key: i, style: styles.stepRow },
