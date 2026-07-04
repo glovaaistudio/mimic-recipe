@@ -653,7 +653,8 @@ function App() {
       }
       const token = await window.Clerk.session.getToken();
       if (!token) { setError("Couldn't verify your sign-in. Please sign out and back in, then try again."); setLoading(false); return; }
-      const body = tab === "text" ? { ingredientText, language } : { imageBase64, imageMediaType: imageFile.type, language };
+      const pantryNames = pantryItems.map(item => item.item_name);
+      const body = tab === "text" ? { ingredientText, language, pantryItems: pantryNames } : { imageBase64, imageMediaType: imageFile.type, language, pantryItems: pantryNames };
       const response = await fetch("/api/generate", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }, body: JSON.stringify(body) });
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
