@@ -35,7 +35,7 @@ export default async function handler(req, res) {
 
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: "https://mimic-recipe.vercel.app/"
+      return_url: "https://mimicrecipe.com/"
     });
 
     return res.status(200).json({ url: session.url });
