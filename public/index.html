@@ -480,9 +480,10 @@ function App() {
     try {
       if (!window.Clerk || !window.Clerk.session) { handleSignIn(); return; }
       const token = await window.Clerk.session.getToken({ skipCache: true });
+      const pantryNames = pantryItems.map(item => item.item_name);
       const body = tab === "text"
-        ? { ingredientText, regenerate: true, language }
-        : { imageBase64, imageMediaType: imageFile ? imageFile.type : "image/jpeg", regenerate: true, language };
+        ? { ingredientText, regenerate: true, language, pantryItems: pantryNames }
+        : { imageBase64, imageMediaType: imageFile ? imageFile.type : "image/jpeg", regenerate: true, language, pantryItems: pantryNames };
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
