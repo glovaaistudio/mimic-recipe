@@ -769,8 +769,6 @@ function App() {
 
       e("div", { style: styles.footer }, "Powered by Claude AI \u00B7 A Glova Studio concept \u00B7 ", e("a", { href: "mailto:support@mimicrecipe.com", style: { color: "#A89D88", textDecoration: "underline" } }, "support@mimicrecipe.com")),
 
-      showPremiumModal
-
       showPremiumModal ? e(PremiumModal, { onClose: () => setShowPremiumModal(false), onUpgrade: handleUpgrade }) : null
     )
   );
