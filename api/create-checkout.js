@@ -4,8 +4,8 @@ import { verifyToken } from "@clerk/backend";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const PRICE_IDS = {
-  monthly: "price_1TllkT2ERHOpSSgHFXgrrNq0",
-  yearly: "price_1Tlln62ERHOpSSgHk7ae8BDB"
+  monthly: "price_1TpQqhFjNq5xfrbjZwkDCHsU",
+  yearly: "price_1TpQqgFjNq5xfrbj4a2J25kc"
 };
 
 export default async function handler(req, res) {
