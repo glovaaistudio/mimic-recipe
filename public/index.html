@@ -207,8 +207,13 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
       e("div", { style: styles.sectionHead }, "Ingredients"),
       (data.ingredients || []).map((ing, i) => {
         const { amount, unit } = displayIngredient(ing);
-        return e("div", { key: i, style: styles.ingredientRow },
-          e("span", null, ing.name),
+        const hasIt = ing.have === true;
+        const showIndicator = ing.have !== undefined;
+        return e("div", { key: i, style: { ...styles.ingredientRow, background: showIndicator ? (hasIt ? "rgba(31,77,58,0.04)" : "rgba(232,96,44,0.04)") : "transparent" } },
+          e("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
+            showIndicator ? e("span", { style: { fontSize: "14px", minWidth: "20px" } }, hasIt ? "\u2705" : "\uD83D\uDED2") : null,
+            e("span", null, ing.name)
+          ),
           e("span", { style: styles.ingredientAmount }, amount + " " + unit)
         );
       }),
