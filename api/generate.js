@@ -94,7 +94,7 @@ Respond ONLY with a JSON object (no markdown, no backticks) with this exact stru
   "tags": ["tag1", "tag2"],
   "baseServings": 2,
   "ingredients": [
-    { "name": "ingredient name", "amount": "number as string", "unit": "ml/g/tsp/cups/etc" }
+    { "name": "ingredient name", "amount": "number as string", "unit": "ml/g/tsp/cups/etc", "have": true }
   ],
   "steps": ["Step 1 text", "Step 2 text"],
   "tip": "One pro tip",
