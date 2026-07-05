@@ -249,6 +249,11 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
         ),
         e("div", { style: { fontSize: "11px", color: INK_MUTED, fontFamily: SANS, marginBottom: "4px" } }, "Estimates only \u2014 values vary based on exact ingredients used.")
       ) : null,
+      data.airfryer ? e("div", { style: { background: "#F0F7FF", border: "1px solid #B8D4F0", borderRadius: "10px", padding: "13px 15px", fontSize: "13.5px", color: "#1A3A5C", lineHeight: "1.6", marginTop: "18px", fontFamily: SANS } },
+        e("span", { style: { fontWeight: "700" } }, "\uD83C\uDF2A\uFE0F Air Fryer alternative: "),
+        data.airfryer
+      ) : null,
+      data.tip ? e("div", { style: styles.tipBox }, "\uD83D\uDCA1 ", e("strong", null, "Pro tip: "), data.tip) : null,
       data.tip ? e("div", { style: styles.tipBox }, "\uD83D\uDCA1 ", e("strong", null, "Pro tip: "), data.tip) : null,
       data.variations ? e(React.Fragment, null,
         e("div", { style: styles.sectionHead }, "Variations to try"),
