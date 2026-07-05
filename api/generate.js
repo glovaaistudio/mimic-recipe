@@ -80,6 +80,7 @@ const { ingredientText, imageBase64, imageMediaType, regenerate, language, pantr
       : `A user has given you the ingredients list from a food product they love and want to recreate at home.\n\nIngredients provided: ${ingredientText}\n\nGenerate a recipe to recreate this at home.`
   }${regenerateInstruction}${languageInstruction}${pantryInstruction}
 
+You MUST include a "nutrition" field in your response with estimated values per serving for calories (kcal), protein (g), carbs (g), fat (g), and fibre (g). These are estimates based on typical ingredient quantities — make your best calculation.
 IMPORTANT - this is a HOME recipe for a real person cooking in their kitchen, not a manufacturing specification:
 - Scale the recipe to a sensible, realistic home serving size (e.g. a proper cake for 8 people, a normal batch of sauce, a regular-sized smoothie) - do NOT just copy tiny per-unit amounts from a nutrition label.
 - Use ingredient names a home cook would recognise and buy at a supermarket (e.g. "eggs", "plain flour", "bicarbonate of soda", "vegetable oil") - NEVER use manufacturing or food-science terminology. Translate any such terms into their everyday kitchen equivalent.
