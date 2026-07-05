@@ -100,7 +100,7 @@ Respond ONLY with a JSON object (no markdown, no backticks) with this exact stru
   "tip": "One pro tip",
   "variations": "Suggestions for variations",
   "nutrition": { "calories": 320, "protein": 8, "carbs": 45, "fat": 12, "fibre": 3 },
-  "imagePrompt": "A short, vivid visual description..."
+  "imagePrompt": "A short, vivid visual description...",
 }`;
 
   const content = imageBase64
