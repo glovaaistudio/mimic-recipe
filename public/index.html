@@ -230,6 +230,25 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
           e("div", { style: styles.stepText }, step)
         )
       ),
+      data.nutrition ? e(React.Fragment, null,
+        e("div", { style: styles.sectionHead }, "Nutrition per serving"),
+        e("div", { style: { display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "8px" } },
+          [
+            ["\uD83D\uDD25", "Calories", data.nutrition.calories, "kcal"],
+            ["\uD83E\uDDE0", "Protein", data.nutrition.protein, "g"],
+            ["\uD83C\uDF5E", "Carbs", data.nutrition.carbs, "g"],
+            ["\uD83E\uDDC0", "Fat", data.nutrition.fat, "g"],
+            ["\uD83C\uDF3F", "Fibre", data.nutrition.fibre, "g"]
+          ].map(([icon, label, value, unit], i) =>
+            e("div", { key: i, style: { background: CREAM, border: "1px solid " + LINE, borderRadius: "10px", padding: "10px 14px", textAlign: "center", flex: "1", minWidth: "60px" } },
+              e("div", { style: { fontSize: "18px", marginBottom: "2px" } }, icon),
+              e("div", { style: { fontFamily: MONO, fontSize: "13px", fontWeight: "700", color: INK } }, value + unit),
+              e("div", { style: { fontFamily: SANS, fontSize: "11px", color: INK_MUTED, marginTop: "2px" } }, label)
+            )
+          )
+        ),
+        e("div", { style: { fontSize: "11px", color: INK_MUTED, fontFamily: SANS, marginBottom: "4px" } }, "Estimates only \u2014 values vary based on exact ingredients used.")
+      ) : null,
       data.tip ? e("div", { style: styles.tipBox }, "\uD83D\uDCA1 ", e("strong", null, "Pro tip: "), data.tip) : null,
       data.variations ? e(React.Fragment, null,
         e("div", { style: styles.sectionHead }, "Variations to try"),
