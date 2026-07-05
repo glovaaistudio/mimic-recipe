@@ -253,7 +253,7 @@ function RecipeResult({ data, servings, setServings, onSave, isSaved: initialSav
         e("span", { style: { fontWeight: "700" } }, "\uD83C\uDF2A\uFE0F Air Fryer alternative: "),
         data.airfryer
       ) : null,
-      data.tip ? e("div", { style: styles.tipBox }, "\uD83D\uDCA1 ", e("strong", null, "Pro tip: "), data.tip) : null,
+      
       data.tip ? e("div", { style: styles.tipBox }, "\uD83D\uDCA1 ", e("strong", null, "Pro tip: "), data.tip) : null,
       data.variations ? e(React.Fragment, null,
         e("div", { style: styles.sectionHead }, "Variations to try"),
