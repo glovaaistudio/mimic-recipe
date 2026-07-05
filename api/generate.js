@@ -99,7 +99,8 @@ Respond ONLY with a JSON object (no markdown, no backticks) with this exact stru
   "steps": ["Step 1 text", "Step 2 text"],
   "tip": "One pro tip",
   "variations": "Suggestions for variations",
-  "imagePrompt": "A short, vivid visual description of the finished dish for an illustrator, focused on appearance, colours, plating/glassware, and lighting. No text in the image."
+  "nutrition": { "calories": 320, "protein": 8, "carbs": 45, "fat": 12, "fibre": 3 },
+  "imagePrompt": "A short, vivid visual description..."
 }`;
 
   const content = imageBase64
