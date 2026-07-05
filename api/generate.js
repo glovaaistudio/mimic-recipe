@@ -81,7 +81,7 @@ const { ingredientText, imageBase64, imageMediaType, regenerate, language, pantr
   }${regenerateInstruction}${languageInstruction}${pantryInstruction}
 
 You MUST include a "nutrition" field in your response with estimated values per serving for calories (kcal), protein (g), carbs (g), fat (g), and fibre (g). These are estimates based on typical ingredient quantities — make your best calculation.
-Where the recipe is suitable for an air fryer (e.g. chicken, fish, vegetables, pastry — but NOT soups, stews, boiled pasta, or liquid-based recipes), include an "airfryer" field with brief alternative cooking instructions including temperature (°C) and time for a typical 1800W air fryer. If the recipe is not suitable for an air fryer, omit the "airfryer" field entirely.
+Where the recipe is suitable for an air fryer (e.g. chicken, fish, vegetables, pastry — but NOT soups, stews, boiled pasta, or liquid-based recipes), include an "airfryer" field with brief alternative cooking instructions. Always mention "1800W air fryer" at the start, then include temperature (°C) and time, e.g. "1800W air fryer: 180°C for 20 minutes, turning halfway."
 IMPORTANT - this is a HOME recipe for a real person cooking in their kitchen, not a manufacturing specification:
 - Scale the recipe to a sensible, realistic home serving size (e.g. a proper cake for 8 people, a normal batch of sauce, a regular-sized smoothie) - do NOT just copy tiny per-unit amounts from a nutrition label.
 - Use ingredient names a home cook would recognise and buy at a supermarket (e.g. "eggs", "plain flour", "bicarbonate of soda", "vegetable oil") - NEVER use manufacturing or food-science terminology. Translate any such terms into their everyday kitchen equivalent.
