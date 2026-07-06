@@ -408,13 +408,14 @@ function PremiumTeaser({ onUpgrade }) {
       isSignedIn && isPremium ? e("button", {
         style: { ...styles.headerBtnGhost, background: viewingPantry ? "rgba(255,255,255,0.15)" : "transparent" },
         onClick: onViewPantry
-      }, "\uD83E\uDD6B Pantry") : null
+      }, "\uD83E\uDD6B  My Pantry") : null
     ),
     e("img", { src: "/assets/logo.png", alt: "Mimic Recipe", style: styles.logoImg }),
     e("div", { style: { display: "flex", gap: "8px", justifySelf: "end", alignItems: "center" } },
-      isSignedIn ? e("button", { style: { ...styles.headerBtnGhost, background: viewingSaved ? "rgba(255,255,255,0.15)" : "transparent" }, onClick: onViewSaved }, "\uD83D\uDCD6 Recipes") : null,
+      isSignedIn ? e("button", { style: { ...styles.headerBtnGhost, background: viewingSaved ? "rgba(255,255,255,0.15)" : "transparent" }, onClick: onViewSaved }, "\uD83D\uDCD6 My Recipes") : null,
       isSignedIn
-        ? e("button", { style: styles.headerBtnGhost, onClick: onSignOut }, "Sign out")
+        isSignedIn
+        ? e("button", { style: { ...styles.headerBtnGhost, padding: "8px 12px", fontSize: "16px" }, onClick: onSignOut, title: "Sign out" }, "\uD83D\uDC64")
         : e("button", { style: styles.headerBtn, onClick: onSignIn }, "Sign in")
     )
   );
