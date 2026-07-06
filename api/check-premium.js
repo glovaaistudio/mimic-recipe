@@ -28,7 +28,6 @@ export default async function handler(req, res) {
     if (sub && sub.is_premium) {
       isPremium = !sub.expires_at || new Date(sub.expires_at) > new Date();
     }
-    console.log("Premium check for user:", userId, "isPremium:", isPremium, "sub:", JSON.stringify(sub));
     return res.status(200).json({ isPremium });
   } catch (err) {
     console.error("Premium status check failed:", err);
