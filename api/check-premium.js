@@ -31,6 +31,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ isPremium });
   } catch (err) {
     console.error("Premium status check failed:", err);
-    return res.status(200).json({ isPremium: false });
+    console.log("Premium check for user:", userId, "isPremium:", isPremium, "sub:", JSON.stringify(sub));
+    return res.status(200).json({ isPremium });
   }
 }
