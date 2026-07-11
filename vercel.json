@@ -1,6 +1,6 @@
 {
-  "rewrites": [
-    { "source": "/privacy", "destination": "/public/privacy.html" },
-    { "source": "/((?!api/).*)", "destination": "/public/index.html" }
+  "routes": [
+    { "src": "/privacy", "dest": "/public/privacy.html" },
+    { "src": "/((?!api/).*)", "dest": "/public/index.html" }
   ]
 }
