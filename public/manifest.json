@@ -24,5 +24,43 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/Screenshot 1_20260711_103602_0000.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/assets/Screenshot 2_20260711_104047_0000.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/assets/Screenshot 3_20260711_104305_0000.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/assets/Screenshot 4_20260711_104452_0000.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/assets/Screenshot 5_20260711_104714_0000.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/assets/Screenshot 6_20260711_104906_0000.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
   ]
 }
